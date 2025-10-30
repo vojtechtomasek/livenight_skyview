@@ -12,6 +12,8 @@ dependencies:
   auto_route: ^10.2.0
   geolocator: ^14.0.2
   http: ^1.5.0
+  flutter_compass: ^0.8.1
+  provider: ^6.1.5+1
 
 dev_dependencies:
   flutter_test:

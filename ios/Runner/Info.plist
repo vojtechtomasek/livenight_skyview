@@ -45,5 +45,7 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Potřebujeme přístup k orientaci kompasu pro zobrazení směru na obloze.</string>
 </dict>
 </plist>
