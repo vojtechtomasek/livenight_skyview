@@ -20,7 +20,7 @@ class ObjectDescription extends StatelessWidget {
         Text(
           "This is a placeholder description for the selected object. ",
           style: TextStyle(
-            color: CupertinoColors.white.withOpacity(0.85),
+            color: CupertinoColors.white.withValues(alpha: 0.85),
             height: 1.5,
             fontSize: 14.5,
           ),

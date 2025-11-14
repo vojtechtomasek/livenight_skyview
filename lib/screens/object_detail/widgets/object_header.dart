@@ -20,7 +20,7 @@ class ObjectHeader extends StatelessWidget {
         Text(
           "Type • Constellation",
           style: TextStyle(
-            color: CupertinoColors.white.withOpacity(0.75),
+            color: CupertinoColors.white.withValues(alpha: 0.75),
             fontSize: 14,
             letterSpacing: 0.3,
           ),

@@ -9,7 +9,7 @@ class SettingsSectionTitle extends StatelessWidget {
     return Text(
       title,
       style: TextStyle(
-        color: CupertinoColors.white.withOpacity(0.8),
+        color: CupertinoColors.white.withValues(alpha: 0.8),
         fontSize: 16,
         fontWeight: FontWeight.bold,
         letterSpacing: 0.5,

@@ -15,7 +15,7 @@ class SkyViewBottomBar extends StatelessWidget {
         top: false,
         child: Container(
           height: 64,
-          color: CupertinoColors.black.withOpacity(.30),
+          color: CupertinoColors.black.withValues(alpha: .30),
           child: Consumer<CompassProvider>(
             builder: (_, compass, __) {
               final heading = compass.heading ?? 0.0;

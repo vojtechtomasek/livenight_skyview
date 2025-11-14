@@ -23,7 +23,7 @@ class CompassWidget extends StatelessWidget {
         color: color,
         markerColor: markerColor,
         textStyle: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
-              color: color.withOpacity(.75),
+              color: color.withValues(alpha: .75),
               fontSize: 12,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.2,
@@ -75,11 +75,11 @@ class _CompassPainter extends CustomPainter {
     final centerY = h / 2;
 
     final tickMinor = Paint()
-      ..color = color.withOpacity(.5)
+      ..color = color.withValues(alpha: .5)
       ..strokeWidth = 1;
 
     final tickMajor = Paint()
-      ..color = color.withOpacity(.85)
+      ..color = color.withValues(alpha: .85)
       ..strokeWidth = 1.3;
 
     final pxPerDeg = w / fov;
@@ -126,7 +126,7 @@ class _CompassPainter extends CustomPainter {
 
     // Glow efekt (rozmazaná modrá)
     final glow = Paint()
-      ..color = markerColor.withOpacity(.4)
+      ..color = markerColor.withValues(alpha: .4)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
     canvas.drawCircle(Offset(cx, centerY), 4, glow);
 
@@ -135,7 +135,7 @@ class _CompassPainter extends CustomPainter {
       Offset(cx, centerY - 10),
       Offset(cx, centerY + 10),
       Paint()
-        ..color = CupertinoColors.white.withOpacity(.9)
+        ..color = CupertinoColors.white.withValues(alpha: .9)
         ..strokeWidth = 1.4,
     );
 
@@ -144,7 +144,7 @@ class _CompassPainter extends CustomPainter {
       Offset(cx, centerY),
       2.2,
       Paint()
-        ..color = markerColor.withOpacity(.9)
+        ..color = markerColor.withValues(alpha: .9)
         ..style = PaintingStyle.fill,
     );
 
@@ -154,7 +154,7 @@ class _CompassPainter extends CustomPainter {
       text: TextSpan(
         text: '$centerDeg°',
         style: (textStyle ?? const TextStyle()).copyWith(
-          color: CupertinoColors.white.withOpacity(.95),
+          color: CupertinoColors.white.withValues(alpha: .95),
           fontWeight: FontWeight.w700,
         ),
       ),

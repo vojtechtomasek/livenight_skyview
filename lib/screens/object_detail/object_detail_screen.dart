@@ -50,7 +50,7 @@ class _ObjectDetailDraggableSheet extends StatelessWidget {
                   width: 44,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: CupertinoColors.white.withOpacity(0.3),
+                    color: CupertinoColors.white.withValues(alpha: 0.3),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),

@@ -48,9 +48,9 @@ class _CustomLocationFields extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: CupertinoColors.white.withOpacity(0.05),
+        color: CupertinoColors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: CupertinoColors.white.withOpacity(0.1)),
+        border: Border.all(color: CupertinoColors.white.withValues(alpha: 0.1)),
       ),
       child: const Column(
         children: [
@@ -72,10 +72,10 @@ class _LocationTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return CupertinoTextField(
       placeholder: hint,
-      placeholderStyle: TextStyle(color: CupertinoColors.white.withOpacity(0.4)),
+      placeholderStyle: TextStyle(color: CupertinoColors.white.withValues(alpha: 0.4)),
       style: const TextStyle(color: CupertinoColors.white),
       decoration: BoxDecoration(
-        border: Border.all(color: CupertinoColors.white.withOpacity(0.3)),
+        border: Border.all(color: CupertinoColors.white.withValues(alpha: 0.3)),
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(12),
@@ -83,7 +83,7 @@ class _LocationTextField extends StatelessWidget {
         padding: const EdgeInsets.only(left: 12),
         child: Text(
           label,
-          style: TextStyle(color: CupertinoColors.white.withOpacity(0.7)),
+          style: TextStyle(color: CupertinoColors.white.withValues(alpha: 0.7)),
         ),
       ),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),

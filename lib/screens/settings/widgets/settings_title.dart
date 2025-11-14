@@ -18,9 +18,9 @@ class SettingsTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: CupertinoColors.white.withOpacity(0.05),
+        color: CupertinoColors.white.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: CupertinoColors.white.withOpacity(0.1)),
+        border: Border.all(color: CupertinoColors.white.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [
@@ -36,7 +36,7 @@ class SettingsTile extends StatelessWidget {
                   Text(
                     subtitle!,
                     style: TextStyle(
-                      color: CupertinoColors.white.withOpacity(0.7),
+                      color: CupertinoColors.white.withValues(alpha: 0.7),
                       fontSize: 12,
                     ),
                   ),

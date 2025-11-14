@@ -25,7 +25,7 @@ class DisplaySettingsSection extends StatelessWidget {
           subtitle: "Display lines connecting stars",
           trailing: CupertinoSwitch(
               value: showConstellationLines,
-              activeColor: CupertinoColors.activeBlue,
+              activeTrackColor: CupertinoColors.activeBlue,
               onChanged: onShowConstellationLinesChanged),
         ),
       ],

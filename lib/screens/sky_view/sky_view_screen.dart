@@ -74,7 +74,7 @@ class _SkyViewScreenState extends State<SkyViewScreen> {
                             style: const TextStyle(color: CupertinoColors.white),
                             placeholder: 'Search objects...',
                             placeholderStyle: const TextStyle(color: CupertinoColors.systemGrey),
-                            backgroundColor: CupertinoColors.white.withOpacity(0.15),
+                            backgroundColor: CupertinoColors.white.withValues(alpha: 0.15),
                             onChanged: (value) {
                               setState(() {});
                             },
@@ -102,7 +102,7 @@ class _SkyViewScreenState extends State<SkyViewScreen> {
                 onPressed: () {
                   showObjectDetailSheet(context);
                 },
-                color: CupertinoColors.white.withOpacity(0.22),
+                color: CupertinoColors.white.withValues(alpha: 0.22),
                 padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
                 borderRadius: BorderRadius.circular(16),
                 child: const Text(
