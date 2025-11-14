@@ -7,8 +7,41 @@ import 'widgets/sky_view_bottom_bar.dart';
 import 'widgets/sky_view_top_bar.dart';
 
 @RoutePage()
-class SkyViewScreen extends StatelessWidget {
+class SkyViewScreen extends StatefulWidget {
   const SkyViewScreen({super.key});
+
+  @override
+  State<SkyViewScreen> createState() => _SkyViewScreenState();
+}
+
+class _SkyViewScreenState extends State<SkyViewScreen> {
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
+  final FocusNode _searchFocusNode = FocusNode();
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    _searchFocusNode.dispose();
+    super.dispose();
+  }
+
+  void _showSearch() {
+    setState(() {
+      _isSearching = true;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      FocusScope.of(context).requestFocus(_searchFocusNode);
+    });
+  }
+
+  void _hideSearch() {
+    setState(() {
+      _isSearching = false;
+      _searchController.clear();
+    });
+    FocusScope.of(context).unfocus();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,14 +52,55 @@ class SkyViewScreen extends StatelessWidget {
 
           SafeArea(
             bottom: false,
-            child: SkyViewTopBar(
-              onSettingsTap: () {
-                context.router.push(const SettingsRoute());
-              },
-              onSearchTap: () {
-                // TODO: search
-              },
-            ),
+            child: _isSearching
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: TextField(
+                      controller: _searchController,
+                      focusNode: _searchFocusNode,
+                      style: const TextStyle(color: Colors.white),
+                      decoration: InputDecoration(
+                        hintText: 'Search objects...',
+                        hintStyle: const TextStyle(color: Colors.white70),
+                        prefixIcon: IconButton(
+                          icon: const Icon(Icons.arrow_back, color: Colors.white),
+                          onPressed: _hideSearch,
+                        ),
+                        suffixIcon: _searchController.text.isNotEmpty
+                            ? IconButton(
+                                icon: const Icon(Icons.clear, color: Colors.white),
+                                onPressed: () {
+                                  _searchController.clear();
+                                  setState(() {});
+                                },
+                              )
+                            : null,
+                        filled: true,
+                        fillColor: Colors.white.withValues(alpha: 0.15),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.white24),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.white24),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: Colors.white54),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {});
+                      },
+                    ),
+                  )
+                : SkyViewTopBar(
+                    onSettingsTap: () {
+                      context.router.push(const SettingsRoute());
+                    },
+                    onSearchTap: _showSearch,
+                  ),
           ),
 
           const SkyViewBottomBar(),
