@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class CompassWidget extends StatelessWidget {
   final double heading;        // azimut [0..360)
@@ -10,7 +10,7 @@ class CompassWidget extends StatelessWidget {
     super.key,
     required this.heading,
     this.fovDegrees = 120,
-    this.color = Colors.white,
+    this.color = CupertinoColors.white,
     this.markerColor = const Color(0xFF8AB4F8),
   });
 
@@ -22,8 +22,8 @@ class CompassWidget extends StatelessWidget {
         fov: fovDegrees.clamp(30, 180),
         color: color,
         markerColor: markerColor,
-        textStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: color.withValues(alpha: .75),
+        textStyle: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+              color: color.withOpacity(.75),
               fontSize: 12,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.2,
@@ -75,11 +75,11 @@ class _CompassPainter extends CustomPainter {
     final centerY = h / 2;
 
     final tickMinor = Paint()
-      ..color = color.withValues(alpha: .5)
+      ..color = color.withOpacity(.5)
       ..strokeWidth = 1;
 
     final tickMajor = Paint()
-      ..color = color.withValues(alpha: .85)
+      ..color = color.withOpacity(.85)
       ..strokeWidth = 1.3;
 
     final pxPerDeg = w / fov;
@@ -126,7 +126,7 @@ class _CompassPainter extends CustomPainter {
 
     // Glow efekt (rozmazaná modrá)
     final glow = Paint()
-      ..color = markerColor.withValues(alpha: .4)
+      ..color = markerColor.withOpacity(.4)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
     canvas.drawCircle(Offset(cx, centerY), 4, glow);
 
@@ -135,7 +135,7 @@ class _CompassPainter extends CustomPainter {
       Offset(cx, centerY - 10),
       Offset(cx, centerY + 10),
       Paint()
-        ..color = Colors.white.withValues(alpha: .9)
+        ..color = CupertinoColors.white.withOpacity(.9)
         ..strokeWidth = 1.4,
     );
 
@@ -144,7 +144,7 @@ class _CompassPainter extends CustomPainter {
       Offset(cx, centerY),
       2.2,
       Paint()
-        ..color = markerColor.withValues(alpha: .9)
+        ..color = markerColor.withOpacity(.9)
         ..style = PaintingStyle.fill,
     );
 
@@ -154,7 +154,7 @@ class _CompassPainter extends CustomPainter {
       text: TextSpan(
         text: '$centerDeg°',
         style: (textStyle ?? const TextStyle()).copyWith(
-          color: Colors.white.withValues(alpha: .95),
+          color: CupertinoColors.white.withOpacity(.95),
           fontWeight: FontWeight.w700,
         ),
       ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class SettingsTile extends StatelessWidget {
   final String title;
@@ -18,9 +18,9 @@ class SettingsTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: .05),
+        color: CupertinoColors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: CupertinoColors.white.withOpacity(0.1)),
       ),
       child: Row(
         children: [
@@ -30,13 +30,13 @@ class SettingsTile extends StatelessWidget {
               children: [
                 Text(title,
                     style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.w600)),
+                        color: CupertinoColors.white, fontWeight: FontWeight.w600)),
                 if (subtitle != null) ...[
                   const SizedBox(height: 4),
                   Text(
                     subtitle!,
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: .7),
+                      color: CupertinoColors.white.withOpacity(0.7),
                       fontSize: 12,
                     ),
                   ),

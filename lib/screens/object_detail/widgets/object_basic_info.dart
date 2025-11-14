@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'info_row.dart';
 
 class ObjectBasicInfo extends StatelessWidget {
@@ -12,7 +12,7 @@ class ObjectBasicInfo extends StatelessWidget {
         Text(
           "Basic Info",
           style: TextStyle(
-            color: Colors.white,
+            color: CupertinoColors.white,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),

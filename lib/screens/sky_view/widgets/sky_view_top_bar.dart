@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
-class SkyViewTopBar extends StatelessWidget implements PreferredSizeWidget {
+class SkyViewTopBar extends StatelessWidget {
   final VoidCallback? onSearchTap;
   final VoidCallback? onSettingsTap;
 
@@ -12,44 +12,59 @@ class SkyViewTopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      automaticallyImplyLeading: false,
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "Praha • 50.08°N, 14.43°E",
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 2),
-          Text(
-            "29 Oct 22:15 • Local",
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white70,
-                ),
-            overflow: TextOverflow.ellipsis,
-          ),
-        ],
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      color: CupertinoColors.transparent,
+      child: SafeArea(
+        bottom: false,
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Praha • 50.08°N, 14.43°E",
+                    style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+                          color: CupertinoColors.white,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    "29 Oct 22:15 • Local",
+                    style: CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+                          color: CupertinoColors.systemGrey,
+                          fontSize: 14,
+                        ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+            ),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: onSearchTap,
+              child: const Icon(
+                CupertinoIcons.search,
+                color: CupertinoColors.white,
+                size: 24,
+              ),
+            ),
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: onSettingsTap,
+              child: const Icon(
+                CupertinoIcons.settings,
+                color: CupertinoColors.white,
+                size: 24,
+              ),
+            ),
+          ],
+        ),
       ),
-      actions: [
-        IconButton(
-          onPressed: onSearchTap,
-          icon: const Icon(Icons.search, color: Colors.white),
-        ),
-        IconButton(
-          onPressed: onSettingsTap,
-          icon: const Icon(Icons.settings, color: Colors.white),
-        ),
-      ],
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

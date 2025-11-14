@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class ObjectHeader extends StatelessWidget {
   const ObjectHeader({super.key});
@@ -11,7 +11,7 @@ class ObjectHeader extends StatelessWidget {
         const Text(
           "Object Name",
           style: TextStyle(
-            color: Colors.white,
+            color: CupertinoColors.white,
             fontSize: 26,
             fontWeight: FontWeight.bold,
           ),
@@ -20,7 +20,7 @@ class ObjectHeader extends StatelessWidget {
         Text(
           "Type • Constellation",
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.75),
+            color: CupertinoColors.white.withOpacity(0.75),
             fontSize: 14,
             letterSpacing: 0.3,
           ),
@@ -30,10 +30,10 @@ class ObjectHeader extends StatelessWidget {
           height: 220,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            color: Colors.grey[800],
+            color: CupertinoColors.systemGrey,
             boxShadow: const [
               BoxShadow(
-                color: Colors.black54,
+                color: Color(0x8A000000),
                 blurRadius: 8,
                 offset: Offset(0, 4),
               ),
@@ -41,9 +41,9 @@ class ObjectHeader extends StatelessWidget {
           ),
           child: const Center(
             child: Icon(
-              Icons.image,
+              CupertinoIcons.photo,
               size: 48,
-              color: Colors.grey,
+              color: CupertinoColors.systemGrey,
             ),
           ),
         ),

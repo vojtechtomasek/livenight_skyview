@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'settings_section_title.dart';
 import 'settings_title.dart';
 
@@ -15,21 +15,31 @@ class AboutSettingsSection extends StatelessWidget {
         SettingsTile(
           title: "App Store Link",
           subtitle: "Rate or review on the App Store",
-          trailing: IconButton(
-            icon: const Icon(Icons.chevron_right, color: Colors.white70),
+          trailing: CupertinoButton(
+            padding: EdgeInsets.zero,
             onPressed: () {
               // TODO: open App Store listing
             },
+            child: const Icon(
+              CupertinoIcons.chevron_right,
+              color: CupertinoColors.systemGrey,
+              size: 20,
+            ),
           ),
         ),
         SettingsTile(
           title: "Data Source",
           subtitle: "Star catalog and ephemeris (placeholder)",
-          trailing: IconButton(
-            icon: const Icon(Icons.chevron_right, color: Colors.white70),
+          trailing: CupertinoButton(
+            padding: EdgeInsets.zero,
             onPressed: () {
               // TODO: open data source link/details
             },
+            child: const Icon(
+              CupertinoIcons.chevron_right,
+              color: CupertinoColors.systemGrey,
+              size: 20,
+            ),
           ),
         ),
         const SettingsTile(
@@ -40,9 +50,14 @@ class AboutSettingsSection extends StatelessWidget {
         SettingsTile(
           title: "Open Source License",
           subtitle: "View license details",
-          trailing: IconButton(
-            icon: const Icon(Icons.chevron_right, color: Colors.white70),
+          trailing: CupertinoButton(
+            padding: EdgeInsets.zero,
             onPressed: () {},
+            child: const Icon(
+              CupertinoIcons.chevron_right,
+              color: CupertinoColors.systemGrey,
+              size: 20,
+            ),
           ),
         ),
       ],

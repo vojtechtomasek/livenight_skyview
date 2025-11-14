@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/conpass_provider.dart';
 import 'compass_widget.dart';
@@ -15,14 +15,14 @@ class SkyViewBottomBar extends StatelessWidget {
         top: false,
         child: Container(
           height: 64,
-          color: Colors.black.withValues(alpha: .30),
+          color: CupertinoColors.black.withOpacity(.30),
           child: Consumer<CompassProvider>(
             builder: (_, compass, __) {
               final heading = compass.heading ?? 0.0;
               return CompassWidget(
                 heading: heading,
                 fovDegrees: 120,
-                color: Colors.white,
+                color: CupertinoColors.white,
                 markerColor: const Color(0xFF8AB4F8),
               );
             },

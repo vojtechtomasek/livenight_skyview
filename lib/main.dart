@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'providers/conpass_provider.dart';
 import 'routes/app_router.dart';
@@ -20,9 +20,12 @@ class MainApp extends StatelessWidget {
           create: (_) => CompassProvider()..start(),
         ),
       ],
-      child: MaterialApp.router(
+      child: CupertinoApp.router(
         debugShowCheckedModeBanner: false,
         routerConfig: appRouter.config(),
+        theme: const CupertinoThemeData(
+          brightness: Brightness.dark,
+        ),
       ),
     );
   }

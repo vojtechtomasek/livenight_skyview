@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class ObjectDescription extends StatelessWidget {
   const ObjectDescription({super.key});
@@ -11,7 +11,7 @@ class ObjectDescription extends StatelessWidget {
         const Text(
           "Description",
           style: TextStyle(
-            color: Colors.white,
+            color: CupertinoColors.white,
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
@@ -20,7 +20,7 @@ class ObjectDescription extends StatelessWidget {
         Text(
           "This is a placeholder description for the selected object. ",
           style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.85),
+            color: CupertinoColors.white.withOpacity(0.85),
             height: 1.5,
             fontSize: 14.5,
           ),

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'settings_section_title.dart';
 import 'settings_title.dart';
 
@@ -23,8 +23,9 @@ class DisplaySettingsSection extends StatelessWidget {
         SettingsTile(
           title: "Show Constellation Lines",
           subtitle: "Display lines connecting stars",
-          trailing: Switch(
+          trailing: CupertinoSwitch(
               value: showConstellationLines,
+              activeColor: CupertinoColors.activeBlue,
               onChanged: onShowConstellationLinesChanged),
         ),
       ],

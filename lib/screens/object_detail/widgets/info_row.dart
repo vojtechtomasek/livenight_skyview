@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class InfoRow extends StatelessWidget {
   final String label;
@@ -16,9 +16,9 @@ class InfoRow extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.05),
+        color: CupertinoColors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: CupertinoColors.white.withOpacity(0.1)),
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -26,14 +26,14 @@ class InfoRow extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.8),
+              color: CupertinoColors.white.withOpacity(0.8),
               fontSize: 14,
             ),
           ),
           Text(
             value,
             style: const TextStyle(
-              color: Colors.white,
+              color: CupertinoColors.white,
               fontWeight: FontWeight.w600,
               fontSize: 14,
             ),

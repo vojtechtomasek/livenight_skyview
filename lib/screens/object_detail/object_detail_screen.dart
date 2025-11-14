@@ -1,20 +1,18 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'widgets/object_header.dart';
 import 'widgets/object_basic_info.dart';
 import 'widgets/object_description.dart';
 
 Future<void> showObjectDetailSheet(BuildContext context, {String? objectName}) {
-  return showModalBottomSheet(
+  return showCupertinoModalPopup(
     context: context,
-    isScrollControlled: true,
-    backgroundColor: Colors.transparent,
     builder: (ctx) {
       return Stack(
         children: [
           GestureDetector(
             behavior: HitTestBehavior.opaque,
             onTap: () => Navigator.of(ctx).pop(),
-            child: Container(color: Colors.transparent),
+            child: Container(color: CupertinoColors.transparent),
           ),
           _ObjectDetailDraggableSheet(objectName: objectName),
         ],
@@ -52,7 +50,7 @@ class _ObjectDetailDraggableSheet extends StatelessWidget {
                   width: 44,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.3),
+                    color: CupertinoColors.white.withOpacity(0.3),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),

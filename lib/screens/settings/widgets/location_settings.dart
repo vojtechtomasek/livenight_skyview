@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'settings_section_title.dart';
 import 'settings_title.dart';
 
@@ -22,8 +22,9 @@ class LocationSettingsSection extends StatelessWidget {
         SettingsTile(
           title: "Use Current Location",
           subtitle: "Automatically detect position using GPS",
-          trailing: Switch(
+          trailing: CupertinoSwitch(
             value: useCurrentLocation,
+            activeTrackColor: CupertinoColors.activeBlue,
             onChanged: onUseCurrentLocationChanged,
           ),
         ),
@@ -47,9 +48,9 @@ class _CustomLocationFields extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 6),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.05),
+        color: CupertinoColors.white.withOpacity(0.05),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: CupertinoColors.white.withOpacity(0.1)),
       ),
       child: const Column(
         children: [
@@ -69,21 +70,22 @@ class _LocationTextField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
-        hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white38),
-        border: const OutlineInputBorder(),
-        enabledBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white30),
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.white70),
+    return CupertinoTextField(
+      placeholder: hint,
+      placeholderStyle: TextStyle(color: CupertinoColors.white.withOpacity(0.4)),
+      style: const TextStyle(color: CupertinoColors.white),
+      decoration: BoxDecoration(
+        border: Border.all(color: CupertinoColors.white.withOpacity(0.3)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.all(12),
+      prefix: Padding(
+        padding: const EdgeInsets.only(left: 12),
+        child: Text(
+          label,
+          style: TextStyle(color: CupertinoColors.white.withOpacity(0.7)),
         ),
       ),
-      style: const TextStyle(color: Colors.white),
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
     );
   }

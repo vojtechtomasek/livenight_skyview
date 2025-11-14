@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 class SettingsSectionTitle extends StatelessWidget {
   final String title;
@@ -9,7 +9,7 @@ class SettingsSectionTitle extends StatelessWidget {
     return Text(
       title,
       style: TextStyle(
-        color: Colors.white.withValues(alpha: 0.8),
+        color: CupertinoColors.white.withOpacity(0.8),
         fontSize: 16,
         fontWeight: FontWeight.bold,
         letterSpacing: 0.5,
