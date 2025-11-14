@@ -13,7 +13,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _darkMode = true;
   bool _showConstellationLines = false;
   bool _useCurrentLocation = true;
 
@@ -38,9 +37,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             DisplaySettingsSection(
-              darkMode: _darkMode,
               showConstellationLines: _showConstellationLines,
-              onDarkModeChanged: (v) => setState(() => _darkMode = v),
               onShowConstellationLinesChanged: (v) =>
                   setState(() => _showConstellationLines = v),
             ),

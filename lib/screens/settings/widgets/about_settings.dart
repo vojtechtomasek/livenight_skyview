@@ -12,9 +12,29 @@ class AboutSettingsSection extends StatelessWidget {
       children: [
         const SettingsSectionTitle("About"),
         const SizedBox(height: 8),
+        SettingsTile(
+          title: "App Store Link",
+          subtitle: "Rate or review on the App Store",
+          trailing: IconButton(
+            icon: const Icon(Icons.chevron_right, color: Colors.white70),
+            onPressed: () {
+              // TODO: open App Store listing
+            },
+          ),
+        ),
+        SettingsTile(
+          title: "Data Source",
+          subtitle: "Star catalog and ephemeris (placeholder)",
+          trailing: IconButton(
+            icon: const Icon(Icons.chevron_right, color: Colors.white70),
+            onPressed: () {
+              // TODO: open data source link/details
+            },
+          ),
+        ),
         const SettingsTile(
           title: "Version",
-          subtitle: "0.1 (Prototype)",
+          subtitle: "0.1 (prototype)",
           trailing: SizedBox(),
         ),
         SettingsTile(

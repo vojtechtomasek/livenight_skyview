@@ -2,23 +2,34 @@ PODS:
   - Flutter (1.0.0)
   - flutter_compass (0.0.1):
     - Flutter
+  - flutter_gl (0.0.3):
+    - Flutter
+    - three3d_egl (~> 0.1.3)
   - geolocator_apple (1.2.0):
     - Flutter
     - FlutterMacOS
   - package_info_plus (0.4.5):
     - Flutter
+  - three3d_egl (0.1.3)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - flutter_compass (from `.symlinks/plugins/flutter_compass/ios`)
+  - flutter_gl (from `.symlinks/plugins/flutter_gl/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/darwin`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
+
+SPEC REPOS:
+  trunk:
+    - three3d_egl
 
 EXTERNAL SOURCES:
   Flutter:
     :path: Flutter
   flutter_compass:
     :path: ".symlinks/plugins/flutter_compass/ios"
+  flutter_gl:
+    :path: ".symlinks/plugins/flutter_gl/ios"
   geolocator_apple:
     :path: ".symlinks/plugins/geolocator_apple/darwin"
   package_info_plus:
@@ -27,8 +38,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   Flutter: cabc95a1d2626b1b06e7179b784ebcf0c0cde467
   flutter_compass: cbbd285cea1584c7ac9c4e0c3e1f17cbea55e855
+  flutter_gl: 5a5603f35db897697f064027864a32b15d0c421d
   geolocator_apple: 66b711889fd333205763b83c9dcf0a57a28c7afd
   package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
+  three3d_egl: de2cd4950ad2d5f2122166c36583bde4c812e7b5
 
 PODFILE CHECKSUM: 4f1c12611da7338d21589c0b2ecd6bd20b109694
 
