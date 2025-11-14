@@ -6,24 +6,14 @@ class SkyViewBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
           colors: [
-            Colors.indigo.shade900.withValues(alpha: 0.85),
-            Colors.blueGrey.shade900.withValues(alpha: 0.9),
+            Color(0xFF0A0F2C),
+            Color(0xFF0E1B47),
           ],
-        ),
-      ),
-      child: Center(
-        child: Text(
-          "Sky View Placeholder",
-          style: TextStyle(
-            color: Colors.white.withValues(alpha: 0.6),
-            fontSize: 18,
-            fontStyle: FontStyle.italic,
-          ),
         ),
       ),
     );

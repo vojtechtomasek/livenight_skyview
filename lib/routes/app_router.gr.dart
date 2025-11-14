@@ -11,22 +11,6 @@
 part of 'app_router.dart';
 
 /// generated route for
-/// [ObjectDetailScreen]
-class ObjectDetailRoute extends PageRouteInfo<void> {
-  const ObjectDetailRoute({List<PageRouteInfo>? children})
-      : super(ObjectDetailRoute.name, initialChildren: children);
-
-  static const String name = 'ObjectDetailRoute';
-
-  static PageInfo page = PageInfo(
-    name,
-    builder: (data) {
-      return const ObjectDetailScreen();
-    },
-  );
-}
-
-/// generated route for
 /// [SettingsScreen]
 class SettingsRoute extends PageRouteInfo<void> {
   const SettingsRoute({List<PageRouteInfo>? children})
