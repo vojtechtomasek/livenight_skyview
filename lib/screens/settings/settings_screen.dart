@@ -1,5 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import '../../providers/location_provider.dart';
 import 'widgets/display_settings.dart';
 import 'widgets/location_settings.dart';
 import 'widgets/about_settings.dart';
@@ -14,7 +16,6 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   bool _showConstellationLines = false;
-  bool _useCurrentLocation = true;
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +55,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 const SizedBox(height: 20),
                 
                 LocationSettingsSection(
-                  useCurrentLocation: _useCurrentLocation,
-                  onUseCurrentLocationChanged: (v) =>
-                      setState(() => _useCurrentLocation = v),
+                  useCurrentLocation: context.watch<LocationProvider>().useCurrentLocation,
+                  onUseCurrentLocationChanged: (v) {
+                    context.read<LocationProvider>().setUseCurrentLocation(v);
+                  },
                 ),
 
                 const SizedBox(height: 20),

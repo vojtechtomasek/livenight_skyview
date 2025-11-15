@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
 import '../../routes/app_router.dart';
+import '../../services/location_permision_manager.dart';
 import '../object_detail/object_detail_screen.dart';
 import 'widgets/sky_view_background.dart';
 import 'widgets/sky_view_bottom_bar.dart';
@@ -18,6 +19,14 @@ class _SkyViewScreenState extends State<SkyViewScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      LocationPermissionManager.instance.maybeAskForLocationChoice(context);
+    });
+  }
 
   @override
   void dispose() {
