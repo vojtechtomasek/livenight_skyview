@@ -115,4 +115,12 @@ class LocationProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  // Manual setting of coordinates from the settings form
+  void setManualCoordinates({double? latitude, double? longitude}) {
+    _latitude = latitude;
+    _longitude = longitude;
+    _saveToPrefs();     // save to SharedPreferences
+    notifyListeners();
+  }
 }
