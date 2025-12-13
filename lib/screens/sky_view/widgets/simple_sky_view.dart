@@ -1,4 +1,3 @@
-// lib/feature/sky_view/widgets/simple_sky_view.dart
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
@@ -45,18 +44,7 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: RadialGradient(
-          center: Alignment.topCenter,
-          radius: 2.0,
-          colors: [
-            Color(0xFF1a237e), // deep blue
-            // Color(0xFF000814), // very dark blue
-            Colors.orange
-          ],
-          stops: [0.3, 1.0],
-        ),
-      ),
+      color: Colors.black,
       child: Listener(
         onPointerMove: _onPointerMove,
         child: GestureDetector(
@@ -79,9 +67,68 @@ class SkyViewPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    _drawSky(canvas, size);
     _drawStars(canvas, size);
     _drawConstellations(canvas, size);
-    _drawHorizon(canvas, size); // jemně zvýrazněný horizont
+  }
+
+  void _drawSky(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = math.min(size.width, size.height) / 2;
+
+    const Color zenithColor = Color.fromARGB(255, 11, 30, 117); 
+    const Color skyHorizon = Color.fromARGB(255, 27, 16, 66); 
+    const Color groundHorizon = Color.fromARGB(255, 27, 16, 66); 
+    const Color nadirColor = Color.fromARGB(255, 30, 10, 47);
+
+    const int azStep = 2; // Jemný krok pro hladkost
+    const int elStep = 2;
+
+    final paint = Paint()..style = PaintingStyle.fill;
+
+    for (int el = -90; el < 90; el += elStep) {
+      for (int az = 0; az < 360; az += azStep) {        
+        double midEl = el + elStep / 2.0;
+        Color quadColor;
+
+        double t = midEl.abs() / 90.0;
+
+        double smoothT = math.pow(t, 0.6).toDouble(); 
+
+        if (midEl >= 0) {
+          quadColor = Color.lerp(skyHorizon, zenithColor, smoothT)!;
+        } else {
+          double groundT = math.pow(t, 0.5).toDouble();
+          quadColor = Color.lerp(groundHorizon, nadirColor, groundT)!;
+        }
+
+        paint.color = quadColor;
+
+        final p1 = _projectSphereToScreen(
+            az.toDouble(), el.toDouble(), center, radius, size,
+            cullOffScreen: false);
+        final p2 = _projectSphereToScreen(
+            (az + azStep).toDouble(), el.toDouble(), center, radius, size,
+            cullOffScreen: false);
+        final p3 = _projectSphereToScreen((az + azStep).toDouble(),
+            (el + elStep).toDouble(), center, radius, size,
+            cullOffScreen: false);
+        final p4 = _projectSphereToScreen(
+            az.toDouble(), (el + elStep).toDouble(), center, radius, size,
+            cullOffScreen: false);
+
+        if (p1 != null && p2 != null && p3 != null && p4 != null) {
+          final path = Path()
+            ..moveTo(p1.dx, p1.dy)
+            ..lineTo(p2.dx, p2.dy)
+            ..lineTo(p3.dx, p3.dy)
+            ..lineTo(p4.dx, p4.dy)
+            ..close();
+
+          canvas.drawPath(path, paint);
+        }
+      }
+    }
   }
 
   void _drawStars(Canvas canvas, Size size) {
@@ -244,8 +291,9 @@ class SkyViewPainter extends CustomPainter {
     double elevationDeg,
     Offset center,
     double radius,
-    Size size,
-  ) {
+    Size size, {
+    bool cullOffScreen = true,
+  }) {
     // Převod na radiány
     final azimuth = azimuthDeg * math.pi / 180;
     final elevation = elevationDeg * math.pi / 180;
@@ -275,7 +323,7 @@ class SkyViewPainter extends CustomPainter {
     if (z <= 0) return null;
 
     // FOV (field of view) - úhel záběru kamery
-    final fov = math.pi / 3; // 60 stupňů
+    const fov = math.pi / 3; // 60 stupňů
     final focalLength = 1.0 / math.tan(fov / 2);
 
     // Perspektivní projekce na obrazovku
@@ -288,11 +336,13 @@ class SkyViewPainter extends CustomPainter {
     final screenY = center.dy - (projectedY * scale); // Y je obrácené
 
     // Kontrola, zda je hvězda na obrazovce
-    if (screenX < -100 ||
-        screenX > size.width + 100 ||
-        screenY < -100 ||
-        screenY > size.height + 100) {
-      return null;
+    if (cullOffScreen) {
+      if (screenX < -100 ||
+          screenX > size.width + 100 ||
+          screenY < -100 ||
+          screenY > size.height + 100) {
+        return null;
+      }
     }
 
     return Offset(screenX, screenY);
@@ -307,10 +357,7 @@ class SkyViewPainter extends CustomPainter {
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 
-    // Definice souhvězdí po celé sféře
     final constellations = [
-      // Severní polokoule
-      // Velký vůz - souřadnice hvězd
       [
         [195, 55],
         [205, 58],
@@ -320,7 +367,6 @@ class SkyViewPainter extends CustomPainter {
         [245, 57],
         [255, 54],
       ],
-      // Orion - pás Oriona a ramena
       [
         [80, 5],
         [85, 0],
@@ -328,7 +374,6 @@ class SkyViewPainter extends CustomPainter {
         [95, 2],
         [100, 8],
       ],
-      // Kassiopea (W tvar)
       [
         [10, 65],
         [20, 68],
@@ -337,27 +382,22 @@ class SkyViewPainter extends CustomPainter {
         [50, 65],
       ],
 
-      // Jižní polokoule - nová souhvězdí
-      // Jižní kříž (stylizovaně)
       [
         [190, -60],
         [185, -55],
         [195, -65],
         [200, -50],
       ],
-      // Trojúhelník na jihu
       [
         [135, -25],
         [155, -30],
         [145, -45],
       ],
-      // Malý vzor na západě (dolní polokoule)
       [
         [270, -35],
         [280, -40],
         [290, -30],
       ],
-      // Čtverec na východě (dolní polokoule)
       [
         [45, -40],
         [60, -40],
@@ -365,13 +405,11 @@ class SkyViewPainter extends CustomPainter {
         [45, -55],
         [45, -40],
       ],
-      // Jednoduchý trojúhelník v severní části
       [
         [180, 30],
         [200, 25],
         [160, 20],
       ],
-      // Malá skupina na západě (horní polokoule)
       [
         [270, 20],
         [280, 25],
@@ -405,59 +443,6 @@ class SkyViewPainter extends CustomPainter {
         );
       }
     }
-  }
-
-  void _drawHorizon(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = math.min(size.width, size.height) / 2;
-
-    // Rozmazaný "glow" kolem horizontu
-    final softPaint = Paint()
-      ..color = Colors.white.withOpacity(0.20)
-      ..strokeWidth = 6.0
-      ..style = PaintingStyle.stroke
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
-
-    // Jemná ostrá linka
-    final linePaint = Paint()
-      ..color = Colors.white.withOpacity(0.45)
-      ..strokeWidth = 1.4
-      ..style = PaintingStyle.stroke;
-
-    final softPath = Path();
-    final linePath = Path();
-    Offset? previous;
-
-    // Vytvoříme horizont jako body v elevaci 0° po 2°
-    for (double az = 0; az <= 360; az += 2) {
-      final projected = _projectSphereToScreen(
-        az,
-        0, // elevace = 0° → horizont
-        center,
-        radius,
-        size,
-      );
-
-      // Pokud je bod za kamerou (null), začneme novou část křivky
-      if (projected == null) {
-        previous = null;
-        continue;
-      }
-
-      if (previous == null) {
-        softPath.moveTo(projected.dx, projected.dy);
-        linePath.moveTo(projected.dx, projected.dy);
-      } else {
-        softPath.lineTo(projected.dx, projected.dy);
-        linePath.lineTo(projected.dx, projected.dy);
-      }
-
-      previous = projected;
-    }
-
-    // Kreslíme nejdřív glow, pak ostrou čáru
-    canvas.drawPath(softPath, softPaint);
-    canvas.drawPath(linePath, linePaint);
   }
 
   @override
