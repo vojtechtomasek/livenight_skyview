@@ -1,9 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:livenight_skyview/screens/sky_view/widgets/simple_sky_view.dart';
 import '../../routes/app_router.dart';
 import '../../services/location_permision_manager.dart';
-import '../object_detail/object_detail_screen.dart';
-import 'widgets/sky_view_background.dart';
 import 'widgets/sky_view_bottom_bar.dart';
 import 'widgets/sky_view_top_bar.dart';
 
@@ -64,7 +63,7 @@ class _SkyViewScreenState extends State<SkyViewScreen> {
         },
         child: Stack(
           children: [
-            const SkyViewBackground(),
+            const SimpleSkyView(),
 
             Positioned(
               top: 0,
@@ -104,26 +103,6 @@ class _SkyViewScreenState extends State<SkyViewScreen> {
             ),
 
             const SkyViewBottomBar(),
-
-            // Tlačítko jako POSLEDNÍ vrstva (nejvyšší z-index)
-            Center(
-              child: CupertinoButton(
-                onPressed: () {
-                  showObjectDetailSheet(context);
-                },
-                color: CupertinoColors.white.withValues(alpha: 0.22),
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 18),
-                borderRadius: BorderRadius.circular(16),
-                child: const Text(
-                  'Otevřít sheet',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: CupertinoColors.white,
-                  ),
-                ),
-              ),
-            ),
           ],
         ),
       ),
