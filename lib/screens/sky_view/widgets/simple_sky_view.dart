@@ -1,60 +1,87 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../../../providers/sky_view_provider.dart';
 
 class SimpleSkyView extends StatefulWidget {
-  const SimpleSkyView({super.key});
+  final Function(ControlMode)? onControlModeChanged;
+  final Function(VoidCallback)? registerToggleCallback;
+
+  const SimpleSkyView({
+    super.key,
+    this.onControlModeChanged,
+    this.registerToggleCallback,
+  });
 
   @override
   State<SimpleSkyView> createState() => _SimpleSkyViewState();
 }
 
 class _SimpleSkyViewState extends State<SimpleSkyView> {
-  double _horizontalRotation = 0.0; // otáčení doleva/doprava (azimut)
-  double _verticalRotation = 0.0;   // otáčení nahoru/dolů (elevace)
+  @override
+  void initState() {
+    super.initState();
+    // Register the toggle function with parent
+    final provider = context.read<SkyViewProvider>();
+    widget.registerToggleCallback?.call(_toggleControlMode);
 
-  // limity pro vertikální otáčení (celá sféra)
-  static const double _maxVerticalRotation = math.pi / 2;  // +90°
-  static const double _minVerticalRotation = -math.pi / 2; // -90°
+    // Listen to control mode changes
+    provider.addListener(_onProviderChanged);
+  }
+
+  @override
+  void dispose() {
+    context.read<SkyViewProvider>().removeListener(_onProviderChanged);
+    super.dispose();
+  }
+
+  void _onProviderChanged() {
+    final provider = context.read<SkyViewProvider>();
+    widget.onControlModeChanged?.call(provider.controlMode);
+  }
+
+  void _toggleControlMode() {
+    context.read<SkyViewProvider>().toggleControlMode();
+  }
 
   void _onPanUpdate(DragUpdateDetails details) {
-    setState(() {
-      // horizontální otáčení (neomezené) – méně citlivé
-      _horizontalRotation += details.delta.dx * 0.005;
-
-      // vertikální otáčení (omezené) – obrácený směr
-      _verticalRotation -= details.delta.dy * 0.005;
-      _verticalRotation = _verticalRotation.clamp(
-        _minVerticalRotation,
-        _maxVerticalRotation,
-      );
-    });
+    context.read<SkyViewProvider>().updateRotationFromTouch(
+          details.delta.dx,
+          details.delta.dy,
+        );
   }
 
   void _onPointerMove(PointerMoveEvent event) {
-    setState(() {
-      _horizontalRotation += event.delta.dx * 0.005;
-      _verticalRotation -= event.delta.dy * 0.005;
-      _verticalRotation = _verticalRotation.clamp(
-        _minVerticalRotation,
-        _maxVerticalRotation,
+    final provider = context.read<SkyViewProvider>();
+    if (provider.controlMode == ControlMode.touch) {
+      provider.updateRotationFromTouch(
+        event.delta.dx,
+        event.delta.dy,
       );
-    });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.black,
-      child: Listener(
-        onPointerMove: _onPointerMove,
-        child: GestureDetector(
-          onPanUpdate: _onPanUpdate,
-          child: CustomPaint(
-            painter: SkyViewPainter(_horizontalRotation, _verticalRotation),
-            size: Size.infinite,
+    return Consumer<SkyViewProvider>(
+      builder: (context, provider, child) {
+        return Container(
+          color: Colors.black,
+          child: Listener(
+            onPointerMove: _onPointerMove,
+            child: GestureDetector(
+              onPanUpdate: _onPanUpdate,
+              child: CustomPaint(
+                painter: SkyViewPainter(
+                  provider.horizontalRotation,
+                  provider.verticalRotation,
+                ),
+                size: Size.infinite,
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }
@@ -76,9 +103,9 @@ class SkyViewPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width, size.height) / 2;
 
-    const Color zenithColor = Color.fromARGB(255, 11, 30, 117); 
-    const Color skyHorizon = Color.fromARGB(255, 27, 16, 66); 
-    const Color groundHorizon = Color.fromARGB(255, 27, 16, 66); 
+    const Color zenithColor = Color.fromARGB(255, 11, 30, 117);
+    const Color skyHorizon = Color.fromARGB(255, 27, 16, 66);
+    const Color groundHorizon = Color.fromARGB(255, 27, 16, 66);
     const Color nadirColor = Color.fromARGB(255, 30, 10, 47);
 
     const int azStep = 2; // Jemný krok pro hladkost
@@ -87,13 +114,13 @@ class SkyViewPainter extends CustomPainter {
     final paint = Paint()..style = PaintingStyle.fill;
 
     for (int el = -90; el < 90; el += elStep) {
-      for (int az = 0; az < 360; az += azStep) {        
+      for (int az = 0; az < 360; az += azStep) {
         double midEl = el + elStep / 2.0;
         Color quadColor;
 
         double t = midEl.abs() / 90.0;
 
-        double smoothT = math.pow(t, 0.6).toDouble(); 
+        double smoothT = math.pow(t, 0.6).toDouble();
 
         if (midEl >= 0) {
           quadColor = Color.lerp(skyHorizon, zenithColor, smoothT)!;
@@ -151,16 +178,16 @@ class SkyViewPainter extends CustomPainter {
     // Definice hvězd po celé sféře - pozitivní i negativní elevace
     final stars = <SphereStarData>[
       // Jasné hvězdy v různých směrech (severní polokoule)
-      SphereStarData(0, 50, 3.0, true),      // Sever - Polárka
-      SphereStarData(90, 25, 2.5, true),     // Východ
-      SphereStarData(180, 30, 2.8, true),    // Jih
-      SphereStarData(270, 20, 2.2, true),    // Západ
+      SphereStarData(0, 50, 3.0, true), // Sever - Polárka
+      SphereStarData(90, 25, 2.5, true), // Východ
+      SphereStarData(180, 30, 2.8, true), // Jih
+      SphereStarData(270, 20, 2.2, true), // Západ
 
       // Jasné hvězdy na jižní polokouli
-      SphereStarData(45, -30, 2.4, true),    // Jihovýchod dolní
-      SphereStarData(135, -25, 2.6, true),   // Jihozápad dolní
-      SphereStarData(225, -35, 2.3, true),   // Severozápad dolní
-      SphereStarData(315, -20, 2.5, true),   // Severovýchod dolní
+      SphereStarData(45, -30, 2.4, true), // Jihovýchod dolní
+      SphereStarData(135, -25, 2.6, true), // Jihozápad dolní
+      SphereStarData(225, -35, 2.3, true), // Severozápad dolní
+      SphereStarData(315, -20, 2.5, true), // Severovýchod dolní
 
       // Velký vůz (severní část oblohy)
       SphereStarData(195, 55, 2.0, false),
@@ -202,10 +229,10 @@ class SkyViewPainter extends CustomPainter {
       SphereStarData(330, 28, 1.4, false),
 
       // Hvězdy jižní polokoule (negativní elevace)
-      SphereStarData(0, -40, 1.4, false),     // Jih dole
+      SphereStarData(0, -40, 1.4, false), // Jih dole
       SphereStarData(60, -50, 1.3, false),
       SphereStarData(120, -45, 1.5, false),
-      SphereStarData(180, -60, 1.2, false),   // Nejjižnější bod
+      SphereStarData(180, -60, 1.2, false), // Nejjižnější bod
       SphereStarData(240, -35, 1.4, false),
       SphereStarData(300, -55, 1.3, false),
 
@@ -381,7 +408,6 @@ class SkyViewPainter extends CustomPainter {
         [40, 68],
         [50, 65],
       ],
-
       [
         [190, -60],
         [185, -55],
@@ -453,10 +479,10 @@ class SkyViewPainter extends CustomPainter {
 }
 
 class SphereStarData {
-  final double azimuth;    // Azimut ve stupních (0–360)
-  final double elevation;  // Elevace ve stupních (-90 až +90)
-  final double size;       // Velikost hvězdy
-  final bool isBright;     // Zda je hvězda jasná
+  final double azimuth; // Azimut ve stupních (0–360)
+  final double elevation; // Elevace ve stupních (-90 až +90)
+  final double size; // Velikost hvězdy
+  final bool isBright; // Zda je hvězda jasná
 
   SphereStarData(this.azimuth, this.elevation, this.size, this.isBright);
 }

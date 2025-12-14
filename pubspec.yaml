@@ -16,6 +16,7 @@ dependencies:
   flutter_compass: ^0.8.1
   provider: ^6.1.5+1
   flutter_gl: ^0.0.21
+  sensors_plus: ^6.1.1
   three_dart_jsm: ^0.0.10
   three_dart: ^0.0.16
   shared_preferences: ^2.3.3

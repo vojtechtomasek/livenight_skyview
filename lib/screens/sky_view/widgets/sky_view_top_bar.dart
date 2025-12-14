@@ -6,11 +6,15 @@ import 'dart:async';
 class SkyViewTopBar extends StatefulWidget {
   final VoidCallback? onSearchTap;
   final VoidCallback? onSettingsTap;
+  final VoidCallback? onToggleTap;
+  final bool isSensorMode;
 
   const SkyViewTopBar({
     super.key,
     this.onSearchTap,
     this.onSettingsTap,
+    this.onToggleTap,
+    this.isSensorMode = false,
   });
 
   @override
@@ -81,26 +85,22 @@ class _SkyViewTopBarState extends State<SkyViewTopBar> {
                 children: [
                   Text(
                     locationText,
-                    style: CupertinoTheme.of(context)
-                        .textTheme
-                        .textStyle
-                        .copyWith(
-                          color: CupertinoColors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
+                    style:
+                        CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+                              color: CupertinoColors.white,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                            ),
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     "$timeText • Local",
-                    style: CupertinoTheme.of(context)
-                        .textTheme
-                        .textStyle
-                        .copyWith(
-                          color: CupertinoColors.systemGrey,
-                          fontSize: 14,
-                        ),
+                    style:
+                        CupertinoTheme.of(context).textTheme.textStyle.copyWith(
+                              color: CupertinoColors.systemGrey,
+                              fontSize: 14,
+                            ),
                     overflow: TextOverflow.ellipsis,
                   ),
                 ],
@@ -113,6 +113,19 @@ class _SkyViewTopBarState extends State<SkyViewTopBar> {
               onPressed: widget.onSearchTap,
               child: const Icon(
                 CupertinoIcons.search,
+                color: CupertinoColors.white,
+                size: 24,
+              ),
+            ),
+
+            // TOGGLE AR MODE
+            CupertinoButton(
+              padding: EdgeInsets.zero,
+              onPressed: widget.onToggleTap,
+              child: Icon(
+                widget.isSensorMode
+                    ? CupertinoIcons.device_phone_portrait
+                    : CupertinoIcons.hand_draw,
                 color: CupertinoColors.white,
                 size: 24,
               ),

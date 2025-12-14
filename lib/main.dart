@@ -4,6 +4,7 @@ import 'routes/app_router.dart';
 
 import 'providers/conpass_provider.dart';
 import 'providers/location_provider.dart';
+import 'providers/sky_view_provider.dart';
 
 void main() {
   runApp(const MainApp());
@@ -26,6 +27,7 @@ class MainApp extends StatelessWidget {
             return provider;
           },
         ),
+        ChangeNotifierProvider(create: (_) => SkyViewProvider()),
       ],
       child: CupertinoApp.router(
         debugShowCheckedModeBanner: false,

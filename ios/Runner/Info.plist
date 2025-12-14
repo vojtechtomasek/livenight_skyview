@@ -47,5 +47,7 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Potřebujeme přístup k orientaci kompasu pro zobrazení směru na obloze.</string>
+	<key>NSMotionUsageDescription</key>
+	<string>Potřebujeme přístup k senzorům zařízení pro ovládání pohledu na oblohu pohybem telefonu.</string>
 </dict>
 </plist>
