@@ -25,7 +25,7 @@ class SkyViewPainter extends CustomPainter {
     const Color groundHorizon = Color.fromARGB(255, 27, 16, 66);
     const Color nadirColor = Color.fromARGB(255, 30, 10, 47);
 
-    const int azStep = 2; // Jemný krok pro hladkost
+    const int azStep = 2; // Fine step for smoothness
     const int elStep = 2;
 
     final paint = Paint()..style = PaintingStyle.fill;
@@ -96,7 +96,7 @@ class SkyViewPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
 
-    // Definice hvězd po celé sféře - pozitivní i negativní elevace
+    // Definition of stars across the entire sphere - positive and negative elevation
     final stars = SphereStarData.getAllStars();
 
     for (final star in stars) {
@@ -110,7 +110,7 @@ class SkyViewPainter extends CustomPainter {
         verticalRotation,
       );
 
-      // Pokud je hvězda viditelná (není za horizontem nebo za námi)
+      // If the star is visible (not behind the horizon or behind us)
       if (projectedPos != null) {
         final paint = star.isBright
             ? brightStarPaint
@@ -192,7 +192,7 @@ class SkyViewPainter extends CustomPainter {
     for (final constellation in constellations) {
       final projectedPoints = <Offset>[];
 
-      // Převod všech bodů souhvězdí na obrazovkové souřadnice
+      // Convert all constellation points to screen coordinates
       for (final point in constellation) {
         final projected = projectSphereToScreen(
           point[0].toDouble(),
@@ -208,7 +208,7 @@ class SkyViewPainter extends CustomPainter {
         }
       }
 
-      // Kreslení čar mezi body souhvězdí
+      // draw lines between the projected points
       for (int i = 0; i < projectedPoints.length - 1; i++) {
         canvas.drawLine(
           projectedPoints[i],

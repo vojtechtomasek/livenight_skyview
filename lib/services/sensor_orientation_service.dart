@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:sensors_plus/sensors_plus.dart';
 
 class SensorOrientationService {
-  // Sensor subscriptions
   StreamSubscription<GyroscopeEvent>? _gyroscopeSubscription;
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
   StreamSubscription<MagnetometerEvent>? _magnetometerSubscription;
@@ -83,16 +82,13 @@ class SensorOrientationService {
     final dt = (now.difference(_lastGyroUpdate!).inMicroseconds) / 1000000.0;
     _lastGyroUpdate = now;
 
-    if (dt > 0.1) return; // Skip large time gaps
+    if (dt > 0.1) return;
 
-    // Gyroscope values are in radians per second
-    // For portrait mode: x = pitch, y = yaw (horizontal), z = roll
     final pitchRate = event.x; // Tilting phone forward/backward
     final yawRate = event.y; // Rotating phone left/right (horizontal)
 
     // Integrate rotation rates to get angles
-    // Note: We use yaw for horizontal and pitch for vertical
-    _horizontalRotation -= yawRate * dt; // Negative for intuitive direction
+    _horizontalRotation -= yawRate * dt;
     _verticalRotation += pitchRate * dt;
 
     // Clamp vertical rotation to prevent looking too far up or down
@@ -121,10 +117,12 @@ class SensorOrientationService {
     // Calculate actual pitch from gravity
     final actualPitch = math.atan2(az, math.sqrt(ax * ax + ay * ay));
 
-    // Apply small correction to prevent drift
-    const correctionFactor = 0.02;
-    _verticalRotation += (actualPitch - _verticalRotation) * correctionFactor;
-    _verticalRotation = _verticalRotation.clamp(-math.pi / 2, math.pi / 2);
+    final diff = actualPitch - _verticalRotation;
+    if (diff.abs() > 0.01) { // ~0.6° threshold
+      const correctionFactor = 0.001; //   if it drifts lower this
+      _verticalRotation += diff * correctionFactor;
+      _verticalRotation = _verticalRotation.clamp(-math.pi / 2, math.pi / 2);
+    }
   }
 
   void _correctHorizontalDrift() {
@@ -174,8 +172,8 @@ class SensorOrientationService {
         diff += 2 * math.pi;
       }
 
-      // Apply small correction to prevent drift while allowing smooth rotation
-      const correctionFactor = 0.01;
+      // Apply very small correction to prevent drift while allowing smooth rotation
+      const correctionFactor = 0.002; //   if it drifts lower this
       _horizontalRotation += diff * correctionFactor;
       _horizontalRotation = _horizontalRotation % (2 * math.pi);
     }

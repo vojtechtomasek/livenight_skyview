@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:provider/provider.dart';
 import 'package:livenight_skyview/screens/sky_view/widgets/simple_sky_view.dart';
 import '../../routes/app_router.dart';
 import '../../services/location_permision_manager.dart';
@@ -19,8 +20,6 @@ class _SkyViewScreenState extends State<SkyViewScreen> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocusNode = FocusNode();
-  ControlMode _controlMode = ControlMode.touch;
-  VoidCallback? _toggleControlMode;
 
   @override
   void initState() {
@@ -56,74 +55,69 @@ class _SkyViewScreenState extends State<SkyViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      child: GestureDetector(
-        onTap: () {
-          if (_isSearching) {
-            FocusScope.of(context).unfocus();
-            _hideSearch();
-          }
-        },
-        child: Stack(
-          children: [
-            SimpleSkyView(
-              onControlModeChanged: (mode) {
-                setState(() {
-                  _controlMode = mode;
-                });
-              },
-              registerToggleCallback: (callback) {
-                _toggleControlMode = callback;
-              },
-            ),
-            Positioned(
-              top: 0,
-              left: 0,
-              right: 0,
-              child: SafeArea(
-                bottom: false,
-                child: _isSearching
-                    ? Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: CupertinoSearchTextField(
-                            controller: _searchController,
-                            focusNode: _searchFocusNode,
-                            style:
-                                const TextStyle(color: CupertinoColors.white),
-                            placeholder: 'Search objects...',
-                            placeholderStyle: const TextStyle(
-                                color: CupertinoColors.systemGrey),
-                            backgroundColor:
-                                CupertinoColors.white.withValues(alpha: 0.15),
-                            onChanged: (value) {
-                              setState(() {});
+    return Consumer<SkyViewProvider>(
+      builder: (context, skyViewProvider, child) {
+        return CupertinoPageScaffold(
+          child: GestureDetector(
+            onTap: () {
+              if (_isSearching) {
+                FocusScope.of(context).unfocus();
+                _hideSearch();
+              }
+            },
+            child: Stack(
+              children: [
+                const SimpleSkyView(),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SafeArea(
+                    bottom: false,
+                    child: _isSearching
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: CupertinoSearchTextField(
+                                controller: _searchController,
+                                focusNode: _searchFocusNode,
+                                style:
+                                    const TextStyle(color: CupertinoColors.white),
+                                placeholder: 'Search objects...',
+                                placeholderStyle: const TextStyle(
+                                    color: CupertinoColors.systemGrey),
+                                backgroundColor:
+                                    CupertinoColors.white.withValues(alpha: 0.15),
+                                onChanged: (value) {
+                                  setState(() {});
+                                },
+                                onSuffixTap: () {
+                                  _searchController.clear();
+                                  setState(() {});
+                                },
+                              ),
+                            ),
+                          )
+                        : SkyViewTopBar(
+                            onSettingsTap: () {
+                              context.router.push(const SettingsRoute());
                             },
-                            onSuffixTap: () {
-                              _searchController.clear();
-                              setState(() {});
+                            onSearchTap: _showSearch,
+                            onToggleTap: () {
+                              skyViewProvider.toggleControlMode();
                             },
+                            isSensorMode: skyViewProvider.controlMode == ControlMode.sensor,
                           ),
-                        ),
-                      )
-                    : SkyViewTopBar(
-                        onSettingsTap: () {
-                          context.router.push(const SettingsRoute());
-                        },
-                        onSearchTap: _showSearch,
-                        onToggleTap: () {
-                          _toggleControlMode?.call();
-                        },
-                        isSensorMode: _controlMode == ControlMode.sensor,
-                      ),
-              ),
+                  ),
+                ),
+                const SkyViewBottomBar(),
+              ],
             ),
-            const SkyViewBottomBar(),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

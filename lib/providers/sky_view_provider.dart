@@ -73,7 +73,7 @@ class SkyViewProvider extends ChangeNotifier {
     }
     _horizontalRotation += horizontalDiff * _smoothingFactor;
 
-    // Apply smoothing for vertical rotation (no wrap-around needed)
+    // Apply smoothing for vertical rotation
     _verticalRotation +=
         (_targetVerticalRotation - _verticalRotation) * _smoothingFactor;
 

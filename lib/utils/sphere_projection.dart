@@ -1,8 +1,6 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
-/// Projects a 3D sphere coordinate (azimuth, elevation) onto a 2D screen position.
-/// Returns null if the point is behind the camera or off-screen (when cullOffScreen is true).
 Offset? projectSphereToScreen(
   double azimuthDeg,
   double elevationDeg,
@@ -42,7 +40,7 @@ Offset? projectSphereToScreen(
   if (z <= 0) return null;
 
   // FOV (field of view) - camera viewing angle
-  const fov = math.pi / 3; // 60 degrees
+  const fov = math.pi / 3;
   final focalLength = 1.0 / math.tan(fov / 2);
 
   // Perspective projection to screen
@@ -52,7 +50,7 @@ Offset? projectSphereToScreen(
   // Convert to screen pixels
   final scale = math.min(size.width, size.height) * 0.5;
   final screenX = center.dx + (projectedX * scale);
-  final screenY = center.dy - (projectedY * scale); // Y is inverted
+  final screenY = center.dy - (projectedY * scale);
 
   // Check if star is on screen
   if (cullOffScreen) {

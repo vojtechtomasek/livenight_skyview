@@ -8,61 +8,19 @@ import '../../object_detail/object_detail_screen.dart';
 import 'sky_view_painter.dart';
 
 class SimpleSkyView extends StatefulWidget {
-  final Function(ControlMode)? onControlModeChanged;
-  final Function(VoidCallback)? registerToggleCallback;
-
-  const SimpleSkyView({
-    super.key,
-    this.onControlModeChanged,
-    this.registerToggleCallback,
-  });
+  const SimpleSkyView({super.key});
 
   @override
   State<SimpleSkyView> createState() => _SimpleSkyViewState();
 }
 
 class _SimpleSkyViewState extends State<SimpleSkyView> {
-  @override
-  void initState() {
-    super.initState();
-    // Register the toggle function with parent
-    final provider = context.read<SkyViewProvider>();
-    widget.registerToggleCallback?.call(_toggleControlMode);
-
-    // Listen to control mode changes
-    provider.addListener(_onProviderChanged);
-  }
-
-  @override
-  void dispose() {
-    context.read<SkyViewProvider>().removeListener(_onProviderChanged);
-    super.dispose();
-  }
-
-  void _onProviderChanged() {
-    final provider = context.read<SkyViewProvider>();
-    widget.onControlModeChanged?.call(provider.controlMode);
-  }
-
-  void _toggleControlMode() {
-    context.read<SkyViewProvider>().toggleControlMode();
-  }
 
   void _onPanUpdate(DragUpdateDetails details) {
     context.read<SkyViewProvider>().updateRotationFromTouch(
           details.delta.dx,
           details.delta.dy,
         );
-  }
-
-  void _onPointerMove(PointerMoveEvent event) {
-    final provider = context.read<SkyViewProvider>();
-    if (provider.controlMode == ControlMode.touch) {
-      provider.updateRotationFromTouch(
-        event.delta.dx,
-        event.delta.dy,
-      );
-    }
   }
 
   void _handleStarTap(TapUpDetails details) {
@@ -109,18 +67,15 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
       builder: (context, provider, child) {
         return Container(
           color: Colors.black,
-          child: Listener(
-            onPointerMove: _onPointerMove,
-            child: GestureDetector(
-              onPanUpdate: _onPanUpdate,
-              onTapUp: _handleStarTap,
-              child: CustomPaint(
-                painter: SkyViewPainter(
-                  provider.horizontalRotation,
-                  provider.verticalRotation,
-                ),
-                size: Size.infinite,
+          child: GestureDetector(
+            onPanUpdate: provider.controlMode == ControlMode.touch ? _onPanUpdate : null,
+            onTapUp: _handleStarTap,
+            child: CustomPaint(
+              painter: SkyViewPainter(
+                provider.horizontalRotation,
+                provider.verticalRotation,
               ),
+              size: Size.infinite,
             ),
           ),
         );
