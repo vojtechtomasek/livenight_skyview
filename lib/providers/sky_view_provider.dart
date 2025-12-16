@@ -17,8 +17,8 @@ class SkyViewProvider extends ChangeNotifier {
   final SensorOrientationService _sensorService = SensorOrientationService();
 
   // Rotation limits
-  static const double maxVerticalRotation = 3.14159265359 / 2; // π/2
-  static const double minVerticalRotation = -3.14159265359 / 2; // -π/2
+  static const double maxVerticalRotation = math.pi / 2;
+  static const double minVerticalRotation = -math.pi / 2;
 
   double get horizontalRotation => _horizontalRotation;
   double get verticalRotation => _verticalRotation;
