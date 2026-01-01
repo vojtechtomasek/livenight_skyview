@@ -8,6 +8,7 @@ class SkyViewProvider extends ChangeNotifier {
   double _horizontalRotation = 0.0;
   double _verticalRotation = 0.0;
   ControlMode _controlMode = ControlMode.touch;
+  double _zoomLevel = 1.0;
 
   // Smoothing for sensor data
   double _targetHorizontalRotation = 0.0;
@@ -19,10 +20,15 @@ class SkyViewProvider extends ChangeNotifier {
   // Rotation limits
   static const double maxVerticalRotation = math.pi / 2;
   static const double minVerticalRotation = -math.pi / 2;
+  
+  // Zoom limits
+  static const double minZoomLevel = 0.3;
+  static const double maxZoomLevel = 5.0;
 
   double get horizontalRotation => _horizontalRotation;
   double get verticalRotation => _verticalRotation;
   ControlMode get controlMode => _controlMode;
+  double get zoomLevel => _zoomLevel;
 
   SkyViewProvider() {
     _sensorService.onOrientationUpdate = _handleSensorUpdate;
@@ -49,6 +55,16 @@ class SkyViewProvider extends ChangeNotifier {
     _verticalRotation = _verticalRotation.clamp(
       minVerticalRotation,
       maxVerticalRotation,
+    );
+    notifyListeners();
+  }
+
+  void setZoom(double zoom) {
+    if (_controlMode != ControlMode.touch) return;
+
+    _zoomLevel = zoom.clamp(
+      minZoomLevel,
+      maxZoomLevel,
     );
     notifyListeners();
   }

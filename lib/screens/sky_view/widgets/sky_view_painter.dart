@@ -7,12 +7,14 @@ import '../../../services/constellation_display_service.dart';
 class SkyViewPainter extends CustomPainter {
   final double horizontalRotation;
   final double verticalRotation;
+  final double zoomLevel;
   final List<StarDisplay> stars;
   final List<ConstellationLine> constellations;
 
   SkyViewPainter(
     this.horizontalRotation,
     this.verticalRotation,
+    this.zoomLevel,
     this.stars,
     this.constellations,
   );
@@ -26,7 +28,7 @@ class SkyViewPainter extends CustomPainter {
 
   void _drawSky(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = math.min(size.width, size.height) / 2;
+    final radius = math.min(size.width, size.height) / 2 * zoomLevel;
 
     const Color zenithColor = Color.fromARGB(255, 11, 30, 117);
     const Color skyHorizon = Color.fromARGB(255, 27, 16, 66);
@@ -89,7 +91,7 @@ class SkyViewPainter extends CustomPainter {
 
   void _drawStars(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = math.min(size.width, size.height) / 2;
+    final radius = math.min(size.width, size.height) / 2 * zoomLevel;
 
     for (final star in stars) {
       final projectedPos = projectSphereToScreen(
@@ -127,7 +129,7 @@ class SkyViewPainter extends CustomPainter {
 
   void _drawConstellations(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = math.min(size.width, size.height) / 2;
+    final radius = math.min(size.width, size.height) / 2 * zoomLevel;
 
     final constellationPaint = Paint()
       ..color = Colors.white.withOpacity(0.3)
@@ -168,7 +170,6 @@ class SkyViewPainter extends CustomPainter {
   bool shouldRepaint(SkyViewPainter oldDelegate) {
     return oldDelegate.horizontalRotation != horizontalRotation ||
         oldDelegate.verticalRotation != verticalRotation ||
-        oldDelegate.stars != stars ||
-        oldDelegate.constellations != constellations;
+        oldDelegate.zoomLevel != zoomLevel;
   }
 }

@@ -47,10 +47,9 @@ Offset? projectSphereToScreen(
   final projectedX = (x / z) * focalLength;
   final projectedY = (y / z) * focalLength;
 
-  // Convert to screen pixels
-  final scale = math.min(size.width, size.height) * 0.5;
-  final screenX = center.dx + (projectedX * scale);
-  final screenY = center.dy - (projectedY * scale);
+  // Convert to screen pixels using the provided radius (which includes zoom)
+  final screenX = center.dx + (projectedX * radius);
+  final screenY = center.dy - (projectedY * radius);
 
   // Check if star is on screen
   if (cullOffScreen) {
