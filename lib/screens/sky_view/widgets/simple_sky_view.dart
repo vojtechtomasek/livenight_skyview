@@ -5,6 +5,7 @@ import '../../../models/star_display.dart';
 import '../../../providers/sky_view_provider.dart';
 import '../../../providers/location_provider.dart';
 import '../../../services/star_display_service.dart';
+import '../../../services/constellation_display_service.dart';
 import '../../../utils/sphere_projection.dart';
 import '../../object_detail/object_detail_screen.dart';
 import 'sky_view_painter.dart';
@@ -72,6 +73,19 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
     );
   }
 
+  List<ConstellationLine> _getConstellationData() {
+    final locationProvider = context.read<LocationProvider>();
+    final latitude = locationProvider.latitude ?? 50.0;
+    final longitude = locationProvider.longitude ?? 14.0;
+    final now = DateTime.now().toUtc();
+    
+    return ConstellationDisplayService().getConstellationLines(
+      latitude: latitude,
+      longitude: longitude,
+      dateTime: now,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<SkyViewProvider>(
@@ -86,6 +100,7 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
                 provider.horizontalRotation,
                 provider.verticalRotation,
                 _getStarsData(),
+                _getConstellationData(),
               ),
               size: Size.infinite,
             ),

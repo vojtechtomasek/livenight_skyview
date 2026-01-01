@@ -8,15 +8,20 @@ class StarDisplayService {
   StarDisplayService._internal();
 
   /// Convert catalog stars to display stars based on observer's location and time
+  /// Only displays stars with magnitude < 5
   List<StarDisplay> getDisplayStars({
     required double latitude,
     required double longitude,
     required DateTime dateTime,
+    double maxDisplayMagnitude = 5.0,
   }) {
     final stars = StarCatalogService().stars;
     final displayStars = <StarDisplay>[];
     
     for (final star in stars) {
+      // Filter by display magnitude
+      if (star.mag >= maxDisplayMagnitude) continue;
+      
       // Convert RA/Dec to Az/Alt
       final coords = CoordinateConverter.raDecToAzAlt(
         raDeg: star.raDeg,

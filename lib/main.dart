@@ -6,12 +6,16 @@ import 'providers/conpass_provider.dart';
 import 'providers/location_provider.dart';
 import 'providers/sky_view_provider.dart';
 import 'services/star_catalog_service.dart';
+import 'services/constellation_catalog_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Load star catalog before app starts
-  await StarCatalogService().loadStars(maxMagnitude: 5.0);
+  await StarCatalogService().loadStars(maxMagnitude: 8.5);
+  
+  // Load constellation catalog after stars are loaded
+  await ConstellationCatalogService().loadConstellations();
   
   runApp(const MainApp());
 }

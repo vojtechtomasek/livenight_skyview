@@ -2,13 +2,20 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../../models/star_display.dart';
 import '../../../utils/sphere_projection.dart';
+import '../../../services/constellation_display_service.dart';
 
 class SkyViewPainter extends CustomPainter {
   final double horizontalRotation;
   final double verticalRotation;
   final List<StarDisplay> stars;
+  final List<ConstellationLine> constellations;
 
-  SkyViewPainter(this.horizontalRotation, this.verticalRotation, this.stars);
+  SkyViewPainter(
+    this.horizontalRotation,
+    this.verticalRotation,
+    this.stars,
+    this.constellations,
+  );
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -127,73 +134,14 @@ class SkyViewPainter extends CustomPainter {
       ..strokeWidth = 1.0
       ..style = PaintingStyle.stroke;
 
-    final constellations = [
-      [
-        [195, 55],
-        [205, 58],
-        [215, 60],
-        [225, 62],
-        [235, 60],
-        [245, 57],
-        [255, 54],
-      ],
-      [
-        [80, 5],
-        [85, 0],
-        [90, -2],
-        [95, 2],
-        [100, 8],
-      ],
-      [
-        [10, 65],
-        [20, 68],
-        [30, 65],
-        [40, 68],
-        [50, 65],
-      ],
-      [
-        [190, -60],
-        [185, -55],
-        [195, -65],
-        [200, -50],
-      ],
-      [
-        [135, -25],
-        [155, -30],
-        [145, -45],
-      ],
-      [
-        [270, -35],
-        [280, -40],
-        [290, -30],
-      ],
-      [
-        [45, -40],
-        [60, -40],
-        [60, -55],
-        [45, -55],
-        [45, -40],
-      ],
-      [
-        [180, 30],
-        [200, 25],
-        [160, 20],
-      ],
-      [
-        [270, 20],
-        [280, 25],
-        [290, 22],
-      ],
-    ];
-
-    for (final constellation in constellations) {
+    for (final line in constellations) {
       final projectedPoints = <Offset>[];
 
       // Convert all constellation points to screen coordinates
-      for (final point in constellation) {
+      for (final point in line.points) {
         final projected = projectSphereToScreen(
-          point[0].toDouble(),
-          point[1].toDouble(),
+          point.azimuth,
+          point.altitude,
           center,
           radius,
           size,
@@ -205,7 +153,7 @@ class SkyViewPainter extends CustomPainter {
         }
       }
 
-      // draw lines between the projected points
+      // Draw lines between the projected points
       for (int i = 0; i < projectedPoints.length - 1; i++) {
         canvas.drawLine(
           projectedPoints[i],
@@ -220,6 +168,7 @@ class SkyViewPainter extends CustomPainter {
   bool shouldRepaint(SkyViewPainter oldDelegate) {
     return oldDelegate.horizontalRotation != horizontalRotation ||
         oldDelegate.verticalRotation != verticalRotation ||
-        oldDelegate.stars != stars;
+        oldDelegate.stars != stars ||
+        oldDelegate.constellations != constellations;
   }
 }
