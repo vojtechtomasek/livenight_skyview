@@ -1,13 +1,14 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import '../../../models/sphere_star_data.dart';
+import '../../../models/star_display.dart';
 import '../../../utils/sphere_projection.dart';
 
 class SkyViewPainter extends CustomPainter {
   final double horizontalRotation;
   final double verticalRotation;
+  final List<StarDisplay> stars;
 
-  SkyViewPainter(this.horizontalRotation, this.verticalRotation);
+  SkyViewPainter(this.horizontalRotation, this.verticalRotation, this.stars);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -83,26 +84,10 @@ class SkyViewPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = math.min(size.width, size.height) / 2;
 
-    final starPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-
-    final dimStarPaint = Paint()
-      ..color = Colors.white.withOpacity(0.6)
-      ..style = PaintingStyle.fill;
-
-    final brightStarPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
-
-    // Definition of stars across the entire sphere - positive and negative elevation
-    final stars = SphereStarData.getAllStars();
-
     for (final star in stars) {
       final projectedPos = projectSphereToScreen(
         star.azimuth,
-        star.elevation,
+        star.altitude,
         center,
         radius,
         size,
@@ -112,11 +97,23 @@ class SkyViewPainter extends CustomPainter {
 
       // If the star is visible (not behind the horizon or behind us)
       if (projectedPos != null) {
-        final paint = star.isBright
-            ? brightStarPaint
-            : (star.size > 1.5 ? starPaint : dimStarPaint);
+        // Determine if this is a bright star based on magnitude
+        final isBright = star.mag < 1.5;
+        
+        // Create paint for this star
+        final starPaint = Paint()
+          ..color = Colors.white.withOpacity(star.opacity)
+          ..style = PaintingStyle.fill;
+        
+        // Add glow effect for brighter stars
+        if (isBright) {
+          starPaint.maskFilter = MaskFilter.blur(
+            BlurStyle.normal, 
+            star.size * 0.8,
+          );
+        }
 
-        canvas.drawCircle(projectedPos, star.size, paint);
+        canvas.drawCircle(projectedPos, star.size, starPaint);
       }
     }
   }
@@ -222,6 +219,7 @@ class SkyViewPainter extends CustomPainter {
   @override
   bool shouldRepaint(SkyViewPainter oldDelegate) {
     return oldDelegate.horizontalRotation != horizontalRotation ||
-        oldDelegate.verticalRotation != verticalRotation;
+        oldDelegate.verticalRotation != verticalRotation ||
+        oldDelegate.stars != stars;
   }
 }

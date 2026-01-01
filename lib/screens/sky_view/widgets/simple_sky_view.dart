@@ -1,8 +1,10 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../models/star_display.dart';
 import '../../../providers/sky_view_provider.dart';
-import '../../../models/sphere_star_data.dart';
+import '../../../providers/location_provider.dart';
+import '../../../services/star_display_service.dart';
 import '../../../utils/sphere_projection.dart';
 import '../../object_detail/object_detail_screen.dart';
 import 'sky_view_painter.dart';
@@ -38,7 +40,7 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
     for (final star in stars) {
       final projectedPos = projectSphereToScreen(
         star.azimuth,
-        star.elevation,
+        star.altitude,
         center,
         radius,
         size,
@@ -50,15 +52,24 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
         final distance = (projectedPos - localPosition).distance;
         if (distance < 30) {
           // Star tapped!
-          showObjectDetailSheet(context, objectName: star.name);
+          showObjectDetailSheet(context, objectName: 'HIP ${star.hip}');
           return;
         }
       }
     }
   }
 
-  List<SphereStarData> _getStarsData() {
-    return SphereStarData.getAllStars();
+  List<StarDisplay> _getStarsData() {
+    final locationProvider = context.read<LocationProvider>();
+    final latitude = locationProvider.latitude ?? 50.0; // Default latitude
+    final longitude = locationProvider.longitude ?? 14.0; // Default longitude
+    final now = DateTime.now().toUtc();
+    
+    return StarDisplayService().getDisplayStars(
+      latitude: latitude,
+      longitude: longitude,
+      dateTime: now,
+    );
   }
 
   @override
@@ -74,6 +85,7 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
               painter: SkyViewPainter(
                 provider.horizontalRotation,
                 provider.verticalRotation,
+                _getStarsData(),
               ),
               size: Size.infinite,
             ),

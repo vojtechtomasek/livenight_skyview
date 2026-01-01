@@ -32,3 +32,4 @@ dev_dependencies:
 flutter:
   assets:
     - lib/assets/images/
+    - lib/assets/data/

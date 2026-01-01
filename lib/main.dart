@@ -5,8 +5,14 @@ import 'routes/app_router.dart';
 import 'providers/conpass_provider.dart';
 import 'providers/location_provider.dart';
 import 'providers/sky_view_provider.dart';
+import 'services/star_catalog_service.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load star catalog before app starts
+  await StarCatalogService().loadStars(maxMagnitude: 5.0);
+  
   runApp(const MainApp());
 }
 
