@@ -9,6 +9,7 @@ class SkyViewProvider extends ChangeNotifier {
   double _verticalRotation = 0.0;
   ControlMode _controlMode = ControlMode.touch;
   double _zoomLevel = 1.0;
+  bool _showConstellationLines = true;
 
   // Smoothing for sensor data
   double _targetHorizontalRotation = 0.0;
@@ -29,6 +30,12 @@ class SkyViewProvider extends ChangeNotifier {
   double get verticalRotation => _verticalRotation;
   ControlMode get controlMode => _controlMode;
   double get zoomLevel => _zoomLevel;
+  bool get showConstellationLines => _showConstellationLines;
+
+  void setShowConstellationLines(bool value) {
+    _showConstellationLines = value;
+    notifyListeners();
+  }
 
   SkyViewProvider() {
     _sensorService.onOrientationUpdate = _handleSensorUpdate;

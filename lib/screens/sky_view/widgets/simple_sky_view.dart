@@ -111,6 +111,13 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
   }
 
   List<ConstellationLine> _getConstellationData() {
+    final provider = context.read<SkyViewProvider>();
+    
+    // Return empty list if constellation lines are disabled
+    if (!provider.showConstellationLines) {
+      return [];
+    }
+    
     if (_cachedConstellations != null) {
       return _cachedConstellations!;
     }

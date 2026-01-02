@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../providers/location_provider.dart';
+import '../../providers/sky_view_provider.dart';
 import 'widgets/display_settings.dart';
 import 'widgets/location_settings.dart';
 import 'widgets/about_settings.dart';
@@ -15,8 +16,6 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
-  bool _showConstellationLines = false;
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -47,9 +46,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: const EdgeInsets.all(16),
               children: [
                 DisplaySettingsSection(
-                  showConstellationLines: _showConstellationLines,
-                  onShowConstellationLinesChanged: (v) =>
-                      setState(() => _showConstellationLines = v),
+                  showConstellationLines: context.watch<SkyViewProvider>().showConstellationLines,
+                  onShowConstellationLinesChanged: (v) {
+                    context.read<SkyViewProvider>().setShowConstellationLines(v);
+                  },
                 ),
 
                 const SizedBox(height: 20),
