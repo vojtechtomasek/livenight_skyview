@@ -1,12 +1,12 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
 import 'package:provider/provider.dart';
 import '../../../models/star_display.dart';
 import '../../../providers/sky_view_provider.dart';
 import '../../../providers/location_provider.dart';
 import '../../../services/star_display_service.dart';
 import '../../../services/constellation_display_service.dart';
+import '../../../services/star_catalog_service.dart';
 import '../../../utils/sphere_projection.dart';
 import '../../object_detail/object_detail_screen.dart';
 import 'sky_view_painter.dart';
@@ -21,7 +21,6 @@ class SimpleSkyView extends StatefulWidget {
 class _SimpleSkyViewState extends State<SimpleSkyView> {
   double _baseZoomLevel = 1.0;
   Offset _lastFocalPoint = Offset.zero;
-  int _pointerCount = 0;
   
   List<StarDisplay>? _cachedStars;
   List<ConstellationLine>? _cachedConstellations;
@@ -33,7 +32,6 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
     
     _baseZoomLevel = provider.zoomLevel;
     _lastFocalPoint = details.focalPoint;
-    _pointerCount = details.pointerCount;
   }
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
@@ -52,7 +50,6 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
     }
 
     _lastFocalPoint = details.focalPoint;
-    _pointerCount = details.pointerCount;
   }
 
   void _handleStarTap(TapUpDetails details) {
@@ -81,8 +78,11 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
       if (projectedPos != null) {
         final distance = (projectedPos - localPosition).distance;
         if (distance < 30) {
-          // Star tapped!
-          showObjectDetailSheet(context, objectName: 'HIP ${star.hip}');
+          // Star tapped! Get the full Star object
+          final fullStar = StarCatalogService().getStarByHip(star.hip);
+          if (fullStar != null) {
+            showObjectDetailSheet(context, star: fullStar);
+          }
           return;
         }
       }

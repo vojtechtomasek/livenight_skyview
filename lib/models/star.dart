@@ -20,6 +20,9 @@ class Star {
   final double? raDegDetail;    // RA from detail source, if provided
   final double? decDegDetail;   // Dec from detail source, if provided
 
+  final String? description;
+  final String? imageUrl;
+
   final DateTime? detailFetchedAt;
 
   const Star({
@@ -36,6 +39,8 @@ class Star {
     this.objectType,
     this.raDegDetail,
     this.decDegDetail,
+    this.description,
+    this.imageUrl,
     this.detailFetchedAt,
   });
 }

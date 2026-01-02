@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
+import 'package:livenight_skyview/models/star.dart';
+import 'package:livenight_skyview/api/get_star_detail.dart';
+import 'package:livenight_skyview/api/get_star_description.dart';
 import 'widgets/object_header.dart';
 import 'widgets/object_basic_info.dart';
 import 'widgets/object_description.dart';
 
-Future<void> showObjectDetailSheet(BuildContext context, {String? objectName}) {
+Future<void> showObjectDetailSheet(BuildContext context, {required Star star}) {
   return showCupertinoModalPopup(
     context: context,
     builder: (ctx) {
@@ -15,16 +18,56 @@ Future<void> showObjectDetailSheet(BuildContext context, {String? objectName}) {
             onTap: () => Navigator.of(ctx).pop(),
             child: Container(color: CupertinoColors.transparent),
           ),
-          _ObjectDetailDraggableSheet(objectName: objectName),
+          _ObjectDetailDraggableSheet(star: star),
         ],
       );
     },
   );
 }
 
-class _ObjectDetailDraggableSheet extends StatelessWidget {
-  final String? objectName;
-  const _ObjectDetailDraggableSheet({this.objectName});
+class _ObjectDetailDraggableSheet extends StatefulWidget {
+  final Star star;
+  const _ObjectDetailDraggableSheet({required this.star});
+
+  @override
+  State<_ObjectDetailDraggableSheet> createState() => _ObjectDetailDraggableSheetState();
+}
+
+class _ObjectDetailDraggableSheetState extends State<_ObjectDetailDraggableSheet> {
+  Star? _detailedStar;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchStarDetail();
+  }
+
+  Future<void> _fetchStarDetail() async {
+    try {
+      // First fetch SIMBAD detail
+      final detailService = StarDetailService();
+      final detailedStar = await detailService.fetchStarDetail(baseStar: widget.star);
+      
+      // Then fetch Wikipedia description and image
+      final descriptionService = StarDescriptionService();
+      final enrichedStar = await descriptionService.fetchDescription(baseStar: detailedStar);
+      
+      if (mounted) {
+        setState(() {
+          _detailedStar = enrichedStar;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+          _detailedStar = widget.star; // Fallback to base star
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,21 +104,27 @@ class _ObjectDetailDraggableSheet extends StatelessWidget {
                       ),
                     ),
                     Expanded(
-                      child: SingleChildScrollView(
-                        controller: controller,
-                        padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
-                        child: const Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 20),
-                            ObjectHeader(),
-                            SizedBox(height: 24),
-                            ObjectBasicInfo(),
-                            SizedBox(height: 24),
-                            ObjectDescription(),
-                          ],
-                        ),
-                      ),
+                      child: _isLoading
+                          ? const Center(
+                              child: CupertinoActivityIndicator(
+                                color: CupertinoColors.white,
+                              ),
+                            )
+                          : SingleChildScrollView(
+                              controller: controller,
+                              padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const SizedBox(height: 20),
+                                  ObjectHeader(star: _detailedStar ?? widget.star),
+                                  const SizedBox(height: 24),
+                                  ObjectBasicInfo(star: _detailedStar ?? widget.star),
+                                  const SizedBox(height: 24),
+                                  ObjectDescription(star: _detailedStar ?? widget.star),
+                                ],
+                              ),
+                            ),
                     ),
                   ],
                 ),

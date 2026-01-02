@@ -1,4 +1,3 @@
-import '../models/constellation.dart';
 import '../utils/coordinate_converter.dart';
 import 'star_catalog_service.dart';
 import 'constellation_catalog_service.dart';

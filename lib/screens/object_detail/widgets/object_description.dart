@@ -1,10 +1,16 @@
 import 'package:flutter/cupertino.dart';
+import 'package:livenight_skyview/models/star.dart';
 
 class ObjectDescription extends StatelessWidget {
-  const ObjectDescription({super.key});
+  final Star star;
+  const ObjectDescription({super.key, required this.star});
 
   @override
   Widget build(BuildContext context) {
+    if (star.description == null || star.description!.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -18,7 +24,7 @@ class ObjectDescription extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Text(
-          "This is a placeholder description for the selected object. ",
+          star.description!,
           style: TextStyle(
             color: CupertinoColors.white.withValues(alpha: 0.85),
             height: 1.5,

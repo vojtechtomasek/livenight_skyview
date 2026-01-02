@@ -112,6 +112,22 @@ class ConstellationCatalogService {
     }
   }
 
+  /// Find constellations that contain a specific star by HIP ID
+  List<Constellation> getConstellationsForStar(int hip) {
+    final List<Constellation> result = [];
+    
+    for (final constellation in _constellations) {
+      for (final polyline in constellation.lines) {
+        if (polyline.hipSequence.contains(hip)) {
+          result.add(constellation);
+          break; // No need to check more polylines in this constellation
+        }
+      }
+    }
+    
+    return result;
+  }
+
   /// Clear the catalog (useful for testing)
   void clear() {
     _constellations = [];
