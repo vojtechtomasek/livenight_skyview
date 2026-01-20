@@ -1,5 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
+import '../models/constellation_type.dart';
+import '../services/constellation_catalog_service.dart';
 import '../services/sensor_orientation_service.dart';
 
 enum ControlMode { touch, sensor }
@@ -10,6 +12,7 @@ class SkyViewProvider extends ChangeNotifier {
   ControlMode _controlMode = ControlMode.touch;
   double _zoomLevel = 1.0;
   bool _showConstellationLines = true;
+  ConstellationType _constellationType = ConstellationType.western;
 
   // Smoothing for sensor data
   double _targetHorizontalRotation = 0.0;
@@ -31,10 +34,26 @@ class SkyViewProvider extends ChangeNotifier {
   ControlMode get controlMode => _controlMode;
   double get zoomLevel => _zoomLevel;
   bool get showConstellationLines => _showConstellationLines;
+  ConstellationType get constellationType => _constellationType;
 
   void setShowConstellationLines(bool value) {
     _showConstellationLines = value;
     notifyListeners();
+  }
+
+  Future<void> setConstellationType(ConstellationType type) async {
+    if (_constellationType == type) return;
+    
+    _constellationType = type;
+    notifyListeners();
+    
+    // Load the new constellation data
+    try {
+      await ConstellationCatalogService().changeConstellationType(type);
+      notifyListeners(); // Notify again after data is loaded
+    } catch (e) {
+      print('Error changing constellation type: $e');
+    }
   }
 
   SkyViewProvider() {

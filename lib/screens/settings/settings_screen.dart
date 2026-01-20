@@ -6,6 +6,7 @@ import '../../providers/sky_view_provider.dart';
 import 'widgets/display_settings.dart';
 import 'widgets/location_settings.dart';
 import 'widgets/about_settings.dart';
+import 'widgets/constellation_settings.dart';
 
 @RoutePage()
 class SettingsScreen extends StatefulWidget {
@@ -49,6 +50,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   showConstellationLines: context.watch<SkyViewProvider>().showConstellationLines,
                   onShowConstellationLinesChanged: (v) {
                     context.read<SkyViewProvider>().setShowConstellationLines(v);
+                  },
+                ),
+
+                const SizedBox(height: 20),
+
+                ConstellationSettingsSection(
+                  selectedConstellation: context.watch<SkyViewProvider>().constellationType,
+                  onConstellationChanged: (constellation) {
+                    context.read<SkyViewProvider>().setConstellationType(constellation);
                   },
                 ),
 

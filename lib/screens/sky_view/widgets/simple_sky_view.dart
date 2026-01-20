@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../models/constellation_type.dart';
 import '../../../models/star_display.dart';
 import '../../../providers/sky_view_provider.dart';
 import '../../../providers/location_provider.dart';
@@ -25,6 +26,7 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
   List<StarDisplay>? _cachedStars;
   List<ConstellationLine>? _cachedConstellations;
   DateTime? _lastUpdate;
+  ConstellationType? _lastConstellationType;
 
   void _onScaleStart(ScaleStartDetails details) {
     final provider = context.read<SkyViewProvider>();
@@ -113,10 +115,15 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
   List<ConstellationLine> _getConstellationData() {
     final provider = context.read<SkyViewProvider>();
     
-    // Return empty list if constellation lines are disabled
     if (!provider.showConstellationLines) {
       return [];
     }
+    
+    // Clear cache if constellation type has changed
+    if (_lastConstellationType != null && _lastConstellationType != provider.constellationType) {
+      _cachedConstellations = null;
+    }
+    _lastConstellationType = provider.constellationType;
     
     if (_cachedConstellations != null) {
       return _cachedConstellations!;

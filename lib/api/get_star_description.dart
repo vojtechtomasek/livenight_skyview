@@ -6,8 +6,8 @@ import 'package:livenight_skyview/models/star.dart';
 class StarDescriptionService {
   static const _enBase = 'https://en.wikipedia.org/api/rest_v1';
 
-  /// Fetches a short description (few sentences) and image for a star
-  /// using Wikipedia REST API. Tries Czech first, then English.
+  // Fetches a short description and image for a star
+  // using Wikipedia REST API.
   Future<Star> fetchDescription({
     required Star baseStar,
   }) async {
@@ -22,14 +22,13 @@ class StarDescriptionService {
     return baseStar;
   }
 
-  /// Choose the best possible Wikipedia title
+  // Choose the best possible Wikipedia title
   String? _resolveTitle(Star star) {
     if (star.commonName != null && star.commonName!.isNotEmpty) {
       return star.commonName!;
     }
 
     if (star.mainId != null && star.mainId!.isNotEmpty) {
-      // Remove SIMBAD prefix "* " if present
       final cleaned =
           star.mainId!.startsWith('* ') ? star.mainId!.substring(2) : star.mainId!;
       return cleaned;
@@ -71,7 +70,6 @@ class StarDescriptionService {
       mag: baseStar.mag,
       constellations: baseStar.constellations,
 
-      // keep already fetched detail data
       mainId: baseStar.mainId,
       commonName: baseStar.commonName,
       vMag: baseStar.vMag,
@@ -82,7 +80,6 @@ class StarDescriptionService {
       decDegDetail: baseStar.decDegDetail,
       detailFetchedAt: baseStar.detailFetchedAt,
 
-      // wikipedia additions
       description: data.description,
       imageUrl: data.imageUrl,
     );

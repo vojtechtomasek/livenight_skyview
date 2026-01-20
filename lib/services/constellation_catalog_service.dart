@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import '../models/constellation.dart';
+import '../models/constellation_type.dart';
 import 'star_catalog_service.dart';
 
 class ConstellationCatalogService {
@@ -10,31 +11,36 @@ class ConstellationCatalogService {
 
   List<Constellation> _constellations = [];
   bool _isLoaded = false;
+  ConstellationType _currentType = ConstellationType.western;
 
   List<Constellation> get constellations => _constellations;
   bool get isLoaded => _isLoaded;
+  ConstellationType get currentType => _currentType;
 
-  /// Load constellations from the JSON file
+  /// Load constellations from the JSON file for the specified type
   /// Only includes constellations where all stars have magnitude <= 8.5
-  Future<void> loadConstellations() async {
-    if (_isLoaded) return;
+  /// If type is not specified, uses the current type
+  Future<void> loadConstellations([ConstellationType? type]) async {
+    final constellationType = type ?? _currentType;
+    
+    if (_isLoaded && constellationType == _currentType) return;
 
     try {
-      // Load the JSON file from assets
       final String jsonString = await rootBundle.loadString(
-        'lib/assets/data/constellation.json',
+        constellationType.assetPath,
       );
 
-      // Parse JSON
       final Map<String, dynamic> jsonData = json.decode(jsonString);
       final List<dynamic> constellationsData = jsonData['constellations'] as List<dynamic>;
 
-      // Parse each constellation
       final List<Constellation> loadedConstellations = [];
       
       for (final constData in constellationsData) {
         final String? iau = constData['iau'] as String?;
-        if (iau == null) continue;
+        final String? id = constData['id'] as String?;
+        final String constellationKey = iau ?? id ?? '';
+        
+        if (constellationKey.isEmpty) continue;
 
         final Map<String, dynamic>? commonName = constData['common_name'] as Map<String, dynamic>?;
         final String? nameEnglish = commonName?['english'] as String?;
@@ -76,16 +82,14 @@ class ConstellationCatalogService {
 
             polylines.add(ConstellationPolyline(hipSequence: hipSequence));
           } catch (e) {
-            // Skip this line if there's a parsing error
-            print('Warning: Skipping constellation line in $iau: $e');
+            print('Warning: Skipping constellation line in $constellationKey: $e');
             continue;
           }
         }
 
-        // Only add constellation if all stars are available
         if (allStarsAvailable && polylines.isNotEmpty) {
           loadedConstellations.add(Constellation(
-            iau: iau,
+            iau: constellationKey,
             lines: polylines,
             nameEnglish: nameEnglish,
             nameNative: nameNative,
@@ -94,16 +98,23 @@ class ConstellationCatalogService {
       }
 
       _constellations = loadedConstellations;
+      _currentType = constellationType;
       _isLoaded = true;
 
-      print('Loaded ${_constellations.length} constellations');
+      print('Loaded ${_constellations.length} ${constellationType.displayName} constellations');
     } catch (e) {
       print('Error loading constellation catalog: $e');
       rethrow;
     }
   }
 
-  /// Get a constellation by IAU code
+  Future<void> changeConstellationType(ConstellationType type) async {
+    if (type == _currentType && _isLoaded) return;
+    
+    _isLoaded = false;
+    await loadConstellations(type);
+  }
+
   Constellation? getConstellationByIau(String iau) {
     try {
       return _constellations.firstWhere((c) => c.iau == iau);
@@ -112,7 +123,6 @@ class ConstellationCatalogService {
     }
   }
 
-  /// Find constellations that contain a specific star by HIP ID
   List<Constellation> getConstellationsForStar(int hip) {
     final List<Constellation> result = [];
     
@@ -120,7 +130,7 @@ class ConstellationCatalogService {
       for (final polyline in constellation.lines) {
         if (polyline.hipSequence.contains(hip)) {
           result.add(constellation);
-          break; // No need to check more polylines in this constellation
+          break;
         }
       }
     }
@@ -128,7 +138,6 @@ class ConstellationCatalogService {
     return result;
   }
 
-  /// Clear the catalog (useful for testing)
   void clear() {
     _constellations = [];
     _isLoaded = false;
