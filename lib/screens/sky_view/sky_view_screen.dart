@@ -6,6 +6,7 @@ import '../../routes/app_router.dart';
 import '../../services/location_permision_manager.dart';
 import '../../services/star_search_service.dart';
 import '../../services/star_display_service.dart';
+import '../../services/star_names_service.dart';
 import '../../providers/sky_view_provider.dart';
 import '../../providers/location_provider.dart';
 import '../../models/star.dart';
@@ -202,9 +203,21 @@ class _SkyViewScreenState extends State<SkyViewScreen> {
                                     itemCount: _searchResults.length,
                                     itemBuilder: (context, index) {
                                       final star = _searchResults[index];
-                                      final displayName = star.commonName ?? 
-                                          star.mainId ?? 
-                                          'HIP ${star.hip}';
+                                      
+                                      // Get common name from our database
+                                      final commonName = StarNamesService().getNameByHip(star.hip);
+                                      
+                                      // Build display name: prefer common name, then SIMBAD data, then HIP
+                                      final String displayName;
+                                      if (commonName != null) {
+                                        displayName = '$commonName (HIP ${star.hip})';
+                                      } else if (star.commonName != null) {
+                                        displayName = '${star.commonName} (HIP ${star.hip})';
+                                      } else if (star.mainId != null) {
+                                        displayName = '${star.mainId} (HIP ${star.hip})';
+                                      } else {
+                                        displayName = 'HIP ${star.hip}';
+                                      }
                                       
                                       return CupertinoListTile(
                                         title: Text(

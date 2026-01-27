@@ -1,5 +1,6 @@
 import '../models/star.dart';
 import 'star_catalog_service.dart';
+import 'star_names_service.dart';
 
 class StarSearchService {
   static final StarSearchService _instance = StarSearchService._internal();
@@ -67,6 +68,21 @@ class StarSearchService {
     }
     
     // 4. Default: Search by common name (most user-friendly)
+    // First check our common names database
+    final nameMatches = StarNamesService().searchNames(searchLower);
+    for (final entry in nameMatches.entries) {
+      final star = StarCatalogService().getStarByHip(entry.value);
+      if (star != null) {
+        results.add(star);
+      }
+    }
+    
+    // If we found results in common names, return them
+    if (results.isNotEmpty) {
+      return _sortAndLimit(results);
+    }
+    
+    // Otherwise, search in SIMBAD common names (if already fetched)
     for (final star in stars) {
       // Exact common name match (highest priority)
       if (star.commonName != null && 
