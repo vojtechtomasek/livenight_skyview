@@ -13,7 +13,9 @@ import '../../object_detail/object_detail_screen.dart';
 import 'sky_view_painter.dart';
 
 class SimpleSkyView extends StatefulWidget {
-  const SimpleSkyView({super.key});
+  final VoidCallback? onInteraction;
+  
+  const SimpleSkyView({super.key, this.onInteraction});
 
   @override
   State<SimpleSkyView> createState() => _SimpleSkyViewState();
@@ -29,6 +31,8 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
   ConstellationType? _lastConstellationType;
 
   void _onScaleStart(ScaleStartDetails details) {
+    widget.onInteraction?.call();
+    
     final provider = context.read<SkyViewProvider>();
     if (provider.controlMode != ControlMode.touch) return;
     
@@ -55,6 +59,8 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
   }
 
   void _handleStarTap(TapUpDetails details) {
+    widget.onInteraction?.call();
+    
     final RenderBox box = context.findRenderObject() as RenderBox;
     final localPosition = details.localPosition;
     final size = box.size;
@@ -89,10 +95,22 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
         }
       }
     }
+    
+    // If no star was tapped, clear selection
+    provider.clearSelection();
   }
 
   List<StarDisplay> _getStarsData() {
     final now = DateTime.now();
+    final skyViewProvider = context.read<SkyViewProvider>();
+    
+    // Force refresh if a star was just selected
+    if (skyViewProvider.selectedStar != null && 
+        (_cachedStars == null || 
+         !_cachedStars!.any((s) => s.hip == skyViewProvider.selectedStar!.hip))) {
+      _cachedStars = null;
+    }
+    
     if (_cachedStars != null && _lastUpdate != null && 
         now.difference(_lastUpdate!).inSeconds < 1) {
       return _cachedStars!;
@@ -103,10 +121,14 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
     final longitude = locationProvider.longitude ?? 14.0; // Default longitude
     final utcNow = now.toUtc();
     
+    // Increase magnitude limit if a star is selected to ensure it's visible
+    final maxMag = skyViewProvider.selectedStar != null ? 8.5 : 5.0;
+    
     _cachedStars = StarDisplayService().getDisplayStars(
       latitude: latitude,
       longitude: longitude,
       dateTime: utcNow,
+      maxDisplayMagnitude: maxMag,
     );
     _lastUpdate = now;
     return _cachedStars!;
@@ -163,6 +185,7 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
                   provider.zoomLevel,
                   _getStarsData(),
                   _getConstellationData(),
+                  selectedStarHip: provider.selectedStar?.hip,
                 ),
                 size: Size.infinite,
               ),

@@ -1,6 +1,7 @@
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import '../models/constellation_type.dart';
+import '../models/star.dart';
 import '../services/constellation_catalog_service.dart';
 import '../services/sensor_orientation_service.dart';
 
@@ -13,6 +14,7 @@ class SkyViewProvider extends ChangeNotifier {
   double _zoomLevel = 1.0;
   bool _showConstellationLines = true;
   ConstellationType _constellationType = ConstellationType.western;
+  Star? _selectedStar;
 
   // Smoothing for sensor data
   double _targetHorizontalRotation = 0.0;
@@ -35,6 +37,37 @@ class SkyViewProvider extends ChangeNotifier {
   double get zoomLevel => _zoomLevel;
   bool get showConstellationLines => _showConstellationLines;
   ConstellationType get constellationType => _constellationType;
+  Star? get selectedStar => _selectedStar;
+
+  void selectStar(Star? star, {double? azimuth, double? altitude}) {
+    _selectedStar = star;
+    
+    // Point camera at the star if coordinates are provided
+    if (star != null && azimuth != null && altitude != null) {
+      pointAtStar(azimuth: azimuth, altitude: altitude);
+    }
+    
+    notifyListeners();
+  }
+  
+  void pointAtStar({required double azimuth, required double altitude}) {
+    // Convert azimuth/altitude to camera rotation
+    // The projection system uses negative rotation, so we negate
+    _horizontalRotation = -azimuth * math.pi / 180;
+    _verticalRotation = -altitude * math.pi / 180;
+    
+    _verticalRotation = _verticalRotation.clamp(
+      minVerticalRotation,
+      maxVerticalRotation,
+    );
+    
+    notifyListeners();
+  }
+  
+  void clearSelection() {
+    _selectedStar = null;
+    notifyListeners();
+  }
 
   void setShowConstellationLines(bool value) {
     _showConstellationLines = value;

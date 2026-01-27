@@ -22,7 +22,6 @@ class StarDescriptionService {
     return baseStar;
   }
 
-  // Choose the best possible Wikipedia title
   String? _resolveTitle(Star star) {
     if (star.commonName != null && star.commonName!.isNotEmpty) {
       return star.commonName!;

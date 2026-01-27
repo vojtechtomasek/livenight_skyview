@@ -10,14 +10,16 @@ class SkyViewPainter extends CustomPainter {
   final double zoomLevel;
   final List<StarDisplay> stars;
   final List<ConstellationLine> constellations;
+  final int? selectedStarHip;
 
   SkyViewPainter(
     this.horizontalRotation,
     this.verticalRotation,
     this.zoomLevel,
     this.stars,
-    this.constellations,
-  );
+    this.constellations, {
+    this.selectedStarHip,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -108,14 +110,29 @@ class SkyViewPainter extends CustomPainter {
       if (projectedPos != null) {
         // Determine if this is a bright star based on magnitude
         final isBright = star.mag < 1.5;
+        final isSelected = selectedStarHip != null && star.hip == selectedStarHip;
+        
+        // Draw highlight circle for selected star
+        if (isSelected) {
+          final highlightPaint = Paint()
+            ..color = Colors.blue.withOpacity(0.4)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2.0;
+          
+          // Animated pulsing circles
+          canvas.drawCircle(projectedPos, star.size * 4, highlightPaint);
+          canvas.drawCircle(projectedPos, star.size * 6, highlightPaint..color = Colors.blue.withOpacity(0.2));
+        }
         
         // Create paint for this star
         final starPaint = Paint()
-          ..color = Colors.white.withOpacity(star.opacity)
+          ..color = isSelected 
+              ? Colors.blue.withOpacity(star.opacity) 
+              : Colors.white.withOpacity(star.opacity)
           ..style = PaintingStyle.fill;
         
-        // Add glow effect for brighter stars
-        if (isBright) {
+        // Add glow effect for brighter stars or selected star
+        if (isBright || isSelected) {
           starPaint.maskFilter = MaskFilter.blur(
             BlurStyle.normal, 
             star.size * 0.8,
