@@ -18,16 +18,13 @@ class SkyViewBottomBar extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
           child: LiquidGlass.withOwnLayer(
             settings: const LiquidGlassSettings(
-              blur: 18.0,
-              thickness: 15.0,
-              refractiveIndex: 1.45,
-              
-              glassColor: Color(0x4410162D),
-                
-              lightIntensity: 1.3,
-              ambientStrength: 0.35,
-              
-              saturation: 1.05,
+              blur: 2.0,
+              thickness: 3.0,
+              refractiveIndex: 1.2,
+              glassColor: Color(0x04000000),
+              lightIntensity: 1.0,
+              ambientStrength: 0.2,
+              saturation: 1.0,
             ),
             shape: const LiquidRoundedSuperellipse(
               borderRadius: 26,
