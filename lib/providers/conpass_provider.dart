@@ -2,12 +2,19 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:sensors_plus/sensors_plus.dart';
 
 class CompassProvider extends ChangeNotifier {
   double? _heading;
-  StreamSubscription? _sub;
+  StreamSubscription? _compassSub;
+  StreamSubscription<AccelerometerEvent>? _accelSub;
 
   double _alpha = 0.25;
+  
+  // Store device orientation
+  double _accelZ = 0.0;
+  double? _previousRawHeading;
+  bool _isFlipped = false;
 
   double? get heading => _heading;
 
@@ -16,12 +23,45 @@ class CompassProvider extends ChangeNotifier {
   }
 
   Future<void> start() async {
-    await _sub?.cancel();
-    _sub = FlutterCompass.events?.listen((event) {
+    await _compassSub?.cancel();
+    await _accelSub?.cancel();
+    
+    // Listen to accelerometer to detect screen orientation
+    _accelSub = accelerometerEventStream(
+      samplingPeriod: const Duration(milliseconds: 100),
+    ).listen((event) {
+      // Store Z value - positive when screen faces up, negative when faces down
+      _accelZ = event.z;
+    });
+    
+    _compassSub = FlutterCompass.events?.listen((event) {
       final raw = event.heading;
       if (raw == null) return;
 
-      final h = _normalize(raw);
+      var h = _normalize(raw);
+      
+      // Detect sudden jumps in heading (gimbal lock flip detection)
+      if (_previousRawHeading != null) {
+        final rawDiff = (h - _previousRawHeading!).abs();
+        
+        // If heading suddenly jumped ~180 degrees (between 140-220 degrees)
+        // it's likely a gimbal lock flip
+        if (rawDiff > 140 && rawDiff < 220) {
+          _isFlipped = !_isFlipped;
+        }
+      }
+      
+      _previousRawHeading = h;
+      
+      // Apply flip correction
+      if (_isFlipped) {
+        h = _normalize(h + 180);
+      }
+      
+      // Reset flip state when phone is flat (Z > 5, strong gravity pointing down)
+      if (_accelZ > 5.0) {
+        _isFlipped = false;
+      }
 
       if (_heading == null) {
         _heading = h;
@@ -33,8 +73,10 @@ class CompassProvider extends ChangeNotifier {
   }
 
   void stop() async {
-    await _sub?.cancel();
-    _sub = null;
+    await _compassSub?.cancel();
+    await _accelSub?.cancel();
+    _compassSub = null;
+    _accelSub = null;
   }
 
   @override
