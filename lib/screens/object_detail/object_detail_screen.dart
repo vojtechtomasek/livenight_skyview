@@ -80,11 +80,13 @@ class _ObjectDetailDraggableSheetState extends State<_ObjectDetailDraggableSheet
           children: [
             LiquidGlassLayer(
               settings: const LiquidGlassSettings(
-                thickness: 25,
-                blur: 20,
-                glassColor: Color(0x400A0F2C),
-                refractiveIndex: 1.5,
-                lightIntensity: 0.8,
+                blur: 2.0,
+                thickness: 3.0,
+                refractiveIndex: 1.2,
+                glassColor: Color(0x04000000),
+                lightIntensity: 1.0,
+                ambientStrength: 0.2,
+                saturation: 1.0,
               ),
               child: LiquidGlass(
                 shape: const LiquidRoundedSuperellipse(
