@@ -34,7 +34,11 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
     widget.onInteraction?.call();
     
     final provider = context.read<SkyViewProvider>();
-    if (provider.controlMode != ControlMode.touch) return;
+    
+    // Automatically switch to touch mode if in sensor mode
+    if (provider.controlMode != ControlMode.touch) {
+      provider.toggleControlMode();
+    }
     
     _baseZoomLevel = provider.zoomLevel;
     _lastFocalPoint = details.focalPoint;
@@ -42,7 +46,13 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
 
   void _onScaleUpdate(ScaleUpdateDetails details) {
     final provider = context.read<SkyViewProvider>();
-    if (provider.controlMode != ControlMode.touch) return;
+    
+    // Automatically switch to touch mode if in sensor mode
+    if (provider.controlMode != ControlMode.touch) {
+      provider.toggleControlMode();
+      _baseZoomLevel = provider.zoomLevel;
+      _lastFocalPoint = details.focalPoint;
+    }
 
     // Two fingers = zoom
     if (details.pointerCount >= 2) {
@@ -174,9 +184,9 @@ class _SimpleSkyViewState extends State<SimpleSkyView> {
             onPointerDown: (event) {},
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onScaleStart: provider.controlMode == ControlMode.touch ? _onScaleStart : null,
-              onScaleUpdate: provider.controlMode == ControlMode.touch ? _onScaleUpdate : null,
-              onScaleEnd: provider.controlMode == ControlMode.touch ? (details) {} : null,
+              onScaleStart: _onScaleStart,
+              onScaleUpdate: _onScaleUpdate,
+              onScaleEnd: (details) {},
               onTapUp: _handleStarTap,
               child: CustomPaint(
                 painter: SkyViewPainter(
