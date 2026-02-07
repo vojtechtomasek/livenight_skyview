@@ -1,8 +1,11 @@
+import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/conpass_provider.dart';
+import '../../../providers/sky_view_provider.dart';
 import 'compass_widget.dart';
+
 class SkyViewBottomBar extends StatelessWidget {
   const SkyViewBottomBar({super.key});
 
@@ -16,33 +19,49 @@ class SkyViewBottomBar extends StatelessWidget {
         top: false,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 12),
-          child: LiquidGlass.withOwnLayer(
-            settings: const LiquidGlassSettings(
-              blur: 2.0,
-              thickness: 3.0,
-              refractiveIndex: 1.2,
-              glassColor: Color(0x04000000),
-              lightIntensity: 1.0,
-              ambientStrength: 0.2,
-              saturation: 1.0,
-            ),
-            shape: const LiquidRoundedSuperellipse(
-              borderRadius: 26,
-            ),
-            child: SizedBox(
-              height: 64,
-              child: Consumer<CompassProvider>(
-                builder: (_, compass, __) {
-                  final heading = compass.heading ?? 0.0;
-                  return CompassWidget(
-                    heading: heading,
-                    fovDegrees: 120,
-                    color: CupertinoColors.white,
-                    markerColor: const Color(0xFF8AB4F8),
-                  );
-                },
-              ),
-            ),
+          child: Consumer<SkyViewProvider>(
+            builder: (_, orientation, __) {
+              final altitudeDegrees = orientation.devicePitch * 180 / math.pi;
+              
+              // Calculate opacity based on altitude threshold
+              final opacity = altitudeDegrees > 20 ? 0.0 : 1.0;
+              
+              return IgnorePointer(
+                ignoring: opacity == 0.0,
+                child: AnimatedOpacity(
+                  opacity: opacity,
+                  duration: const Duration(milliseconds: 300),
+                  child: LiquidGlass.withOwnLayer(
+                    settings: const LiquidGlassSettings(
+                      blur: 2.0,
+                      thickness: 3.0,
+                      refractiveIndex: 1.2,
+                      glassColor: Color(0x04000000),
+                      lightIntensity: 1.0,
+                      ambientStrength: 0.2,
+                      saturation: 1.0,
+                    ),
+                    shape: const LiquidRoundedSuperellipse(
+                      borderRadius: 10,
+                    ),
+                    child: SizedBox(
+                      height: 64,
+                      child: Consumer<CompassProvider>(
+                        builder: (_, compass, __) {
+                          final heading = compass.heading ?? 0.0;
+                          return CompassWidget(
+                            heading: heading,
+                            fovDegrees: 120,
+                            color: CupertinoColors.white,
+                            markerColor: const Color(0xFF8AB4F8),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            },
           ),
         ),
       ),

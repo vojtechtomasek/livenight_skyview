@@ -16,6 +16,9 @@ class SkyViewProvider extends ChangeNotifier {
   ConstellationType _constellationType = ConstellationType.western;
   Star? _selectedStar;
 
+  // Physical device orientation (always tracked)
+  double _devicePitch = 0.0;
+
   // Smoothing for sensor data
   double _targetHorizontalRotation = 0.0;
   double _targetVerticalRotation = 0.0;
@@ -33,6 +36,7 @@ class SkyViewProvider extends ChangeNotifier {
 
   double get horizontalRotation => _horizontalRotation;
   double get verticalRotation => _verticalRotation;
+  double get devicePitch => _devicePitch;
   ControlMode get controlMode => _controlMode;
   double get zoomLevel => _zoomLevel;
   bool get showConstellationLines => _showConstellationLines;
@@ -129,7 +133,13 @@ class SkyViewProvider extends ChangeNotifier {
   }
 
   void _handleSensorUpdate(double azimuth, double pitch) {
-    if (_controlMode != ControlMode.sensor) return;
+    // Always track physical device pitch regardless of control mode
+    _devicePitch = pitch;
+    
+    if (_controlMode != ControlMode.sensor) {
+      notifyListeners(); // Notify for device pitch update
+      return;
+    }
 
     // Invert the axes for correct movement direction
     _targetHorizontalRotation = -azimuth;
