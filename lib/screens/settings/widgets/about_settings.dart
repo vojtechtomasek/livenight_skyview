@@ -27,38 +27,20 @@ class AboutSettingsSection extends StatelessWidget {
             ),
           ),
         ),
-        SettingsTile(
+        const SettingsTile(
           title: "Data Source",
-          subtitle: "Star catalog and ephemeris (placeholder)",
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {
-              // TODO: open data source link/details
-            },
-            child: const Icon(
-              CupertinoIcons.chevron_right,
-              color: CupertinoColors.systemGrey,
-              size: 20,
-            ),
-          ),
+          subtitle: "VizieR TAP, SIMBAD TAP, Stellarium cultures",
+          trailing: SizedBox(),
         ),
         const SettingsTile(
           title: "Version",
           subtitle: "0.1 (prototype)",
           trailing: SizedBox(),
         ),
-        SettingsTile(
+        const SettingsTile(
           title: "Open Source License",
-          subtitle: "View license details",
-          trailing: CupertinoButton(
-            padding: EdgeInsets.zero,
-            onPressed: () {},
-            child: const Icon(
-              CupertinoIcons.chevron_right,
-              color: CupertinoColors.systemGrey,
-              size: 20,
-            ),
-          ),
+          subtitle: "MIT License",
+          trailing: SizedBox(),
         ),
       ],
     );

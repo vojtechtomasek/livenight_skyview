@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:provider/provider.dart';
 import '../../../providers/location_provider.dart';
 import 'settings_section_title.dart';
@@ -37,7 +36,7 @@ class LocationSettingsSection extends StatelessWidget {
             subtitle: "Set manual coordinates",
             trailing: SizedBox(),
           ),
-          const _CustomLocationFields(),
+          _CustomLocationFields(),
         ],
       ],
     );
@@ -80,53 +79,42 @@ class _CustomLocationFieldsState extends State<_CustomLocationFields> {
     final locationProvider = context.read<LocationProvider>();
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: LiquidGlass.withOwnLayer(
-        settings: const LiquidGlassSettings(
-          blur: 3.0,
-          thickness: 4.0,
-          refractiveIndex: 1.25,
-          glassColor: Color(0x15FFFFFF),
-          lightIntensity: 1.0,
-          ambientStrength: 0.3,
-          saturation: 1.0,
-        ),
-        shape: const LiquidRoundedSuperellipse(
-          borderRadius: 14,
-        ),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          child: Column(
-            children: [
-              _LocationTextField(
-                label: "Latitude",
-                hint: "e.g. 50.0755",
-                controller: _latController,
-                onChanged: (value) {
-                  final lat = double.tryParse(value);
-                  // necháme existující lon tak jak je
-                  locationProvider.setManualCoordinates(
-                    latitude: lat,
-                    longitude: locationProvider.longitude,
-                  );
-                },
-              ),
-              const SizedBox(height: 12),
-              _LocationTextField(
-                label: "Longitude",
-                hint: "e.g. 14.4378",
-                controller: _lonController,
-                onChanged: (value) {
-                  final lon = double.tryParse(value);
-                  locationProvider.setManualCoordinates(
-                    latitude: locationProvider.latitude,
-                    longitude: lon,
-                  );
-                },
-              ),
-            ],
+      margin: const EdgeInsets.only(bottom: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      decoration: BoxDecoration(
+        color: CupertinoColors.white.withValues(alpha: 0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: CupertinoColors.white.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        children: [
+          _LocationTextField(
+            label: "Latitude",
+            hint: "e.g. 50.0755",
+            controller: _latController,
+            onChanged: (value) {
+              final lat = double.tryParse(value);
+              // necháme existující lon tak jak je
+              locationProvider.setManualCoordinates(
+                latitude: lat,
+                longitude: locationProvider.longitude,
+              );
+            },
           ),
-        ),
+          const SizedBox(height: 12),
+          _LocationTextField(
+            label: "Longitude",
+            hint: "e.g. 14.4378",
+            controller: _lonController,
+            onChanged: (value) {
+              final lon = double.tryParse(value);
+              locationProvider.setManualCoordinates(
+                latitude: locationProvider.latitude,
+                longitude: lon,
+              );
+            },
+          ),
+        ],
       ),
     );
   }
